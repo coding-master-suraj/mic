@@ -1,0 +1,1868 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width,initial-scale=1">
+
+<title>Wireless Mic</title>
+
+<style>
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  min-height:100vh;
+  background:
+    radial-gradient(
+      circle at top,
+      #17202d 0,
+      #080b10 45%,
+      #030406 100%
+    );
+  color:#fff;
+  font-family:Arial,sans-serif;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+.card{
+  width:min(470px,94%);
+  background:rgba(16,21,29,.94);
+  border:1px solid #303946;
+  border-radius:28px;
+  padding:25px;
+  box-shadow:
+    0 25px 80px #000c;
+}
+
+.logo{
+  text-align:center;
+  font-size:58px;
+}
+
+h1{
+  text-align:center;
+  margin:5px 0;
+}
+
+.sub{
+  text-align:center;
+  color:#8995a5;
+  font-size:13px;
+}
+
+input{
+  width:100%;
+  padding:14px;
+  margin-top:9px;
+  background:#070a0f;
+  color:#fff;
+  border:1px solid #303946;
+  border-radius:13px;
+  outline:none;
+}
+
+button{
+  width:100%;
+  border:0;
+  padding:14px;
+  margin-top:10px;
+  border-radius:13px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.primary{
+  background:#fff;
+  color:#000;
+}
+
+.blue{
+  background:#276fca;
+  color:#fff;
+}
+
+.micButton{
+  background:#242c37;
+  color:#fff;
+}
+
+.micButton.active{
+  background:#15944b;
+}
+
+.statusBox{
+  margin-top:18px;
+  padding:14px;
+  border-radius:14px;
+  background:#0a0d12;
+  border:1px solid #252d37;
+}
+
+.statusLine{
+  display:flex;
+  justify-content:space-between;
+  padding:7px 0;
+  border-bottom:1px solid #1d242d;
+  font-size:13px;
+}
+
+.statusLine:last-child{
+  border-bottom:0;
+}
+
+.green{
+  color:#55ff92;
+}
+
+.red{
+  color:#ff6878;
+}
+
+.yellow{
+  color:#ffe066;
+}
+
+.blueText{
+  color:#71b3ff;
+}
+
+.hidden{
+  display:none!important;
+}
+
+.label{
+  display:flex;
+  justify-content:space-between;
+  margin-top:18px;
+  font-size:13px;
+  color:#9aa6b6;
+}
+
+input[type=range]{
+  padding:0;
+  accent-color:#fff;
+}
+
+.visualizer{
+  margin-top:22px;
+  height:125px;
+  border-radius:18px;
+  background:#05070b;
+  border:1px solid #202832;
+  overflow:hidden;
+  position:relative;
+}
+
+canvas{
+  width:100%;
+  height:100%;
+}
+
+.note{
+  text-align:center;
+  color:#778393;
+  font-size:11px;
+  margin-top:13px;
+  line-height:1.5;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="card">
+
+  <div class="logo">
+    🎙️
+  </div>
+
+  <h1>
+    WIRELESS MIC
+  </h1>
+
+  <div class="sub">
+    Professional Microphone Input
+  </div>
+
+
+  <!-- REGISTER -->
+
+  <div id="registerBox">
+
+    <input
+      id="deviceName"
+      placeholder="Device Name">
+
+    <input
+      id="gmail"
+      type="email"
+      placeholder="Gmail Address">
+
+    <button
+      class="primary"
+      onclick="registerDevice()">
+      REGISTER DEVICE
+    </button>
+
+  </div>
+
+
+  <!-- VERIFY -->
+
+  <div
+    id="verifyBox"
+    class="hidden">
+
+    <input
+      id="verifyCode"
+      inputmode="numeric"
+      maxlength="6"
+      placeholder="6 Digit Gmail Code">
+
+    <button
+      class="blue"
+      onclick="verifyGmail()">
+      VERIFY GMAIL
+    </button>
+
+  </div>
+
+
+  <!-- DEVICE INFO -->
+
+  <div
+    id="infoBox"
+    class="statusBox hidden">
+
+    <div class="statusLine">
+
+      <span>Device</span>
+
+      <b id="deviceNumber">
+        -
+      </b>
+
+    </div>
+
+    <div class="statusLine">
+
+      <span>Name</span>
+
+      <b id="deviceTitle">
+        -
+      </b>
+
+    </div>
+
+    <div class="statusLine">
+
+      <span>Registration</span>
+
+      <b
+        id="registeredLight"
+        class="green">
+        ● REGISTERED
+      </b>
+
+    </div>
+
+    <div class="statusLine">
+
+      <span>Connection</span>
+
+      <b
+        id="onlineLight"
+        class="red">
+        ● OFFLINE
+      </b>
+
+    </div>
+
+    <div class="statusLine">
+
+      <span>Approval</span>
+
+      <b id="approval">
+        -
+      </b>
+
+    </div>
+
+  </div>
+
+
+  <!-- MIC BUTTON -->
+
+  <button
+    id="micButton"
+    class="micButton hidden"
+    onclick="toggleMic()">
+
+    🎤 MICROPHONE OFF
+
+  </button>
+
+
+  <!-- VOLUME -->
+
+  <div
+    id="volumeBox"
+    class="hidden">
+
+    <div class="label">
+
+      <span>
+        🎚️ INPUT VOLUME
+      </span>
+
+      <b id="volumeValue">
+        100%
+      </b>
+
+    </div>
+
+    <input
+      id="inputVolume"
+      type="range"
+      min="0"
+      max="100"
+      value="100"
+      oninput="changeVolume()">
+
+  </div>
+
+
+  <!-- VISUALIZER -->
+
+  <div class="visualizer">
+
+    <canvas id="visualizer"></canvas>
+
+  </div>
+
+
+  <div class="note">
+
+    Microphone permission will be requested
+    only after Admin approval and MIC ON.
+
+  </div>
+
+</div>
+
+
+<script>
+
+
+/* =====================================================
+   API URL
+===================================================== */
+
+const API_URL =
+  "https://script.google.com/macros/s/AKfycbxG0tu6VMYbRuXEZ0Kb5-6YcucFC_AHqDdMGE72lyxIslTEey-JofLhrzgQ-UK33WrC/exec";
+
+
+/* =====================================================
+   STORAGE
+===================================================== */
+
+let deviceId =
+  localStorage.getItem(
+    "WIRELESS_MIC_DEVICE_ID"
+  );
+
+let deviceNo =
+  localStorage.getItem(
+    "WIRELESS_MIC_DEVICE_NO"
+  );
+
+let gmail =
+  localStorage.getItem(
+    "WIRELESS_MIC_GMAIL"
+  );
+
+
+/* =====================================================
+   AUDIO
+===================================================== */
+
+let stream = null;
+
+let audioContext = null;
+
+let sourceNode = null;
+
+let gainNode = null;
+
+let analyser = null;
+
+let animation = null;
+
+
+/* =====================================================
+   WEBRTC
+===================================================== */
+
+let peer = null;
+
+let currentSession = null;
+
+let remoteConnected = false;
+
+
+/* =====================================================
+   STATE
+===================================================== */
+
+let approved = false;
+
+let adminMic = false;
+
+let busyPermission = false;
+
+
+/* =====================================================
+   API
+===================================================== */
+
+async function api(
+  action,
+  data={}
+){
+
+  const response =
+    await fetch(
+      API_URL,
+      {
+        method:"POST",
+
+        headers:{
+          "Content-Type":
+            "text/plain;charset=utf-8"
+        },
+
+        body:JSON.stringify({
+          action:action,
+          data:data
+        })
+      }
+    );
+
+  return await response.json();
+
+}
+
+
+/* =====================================================
+   INIT
+===================================================== */
+
+window.addEventListener(
+  "load",
+  () => {
+
+    if(!deviceId){
+
+      setOnline(false);
+
+      return;
+
+    }
+
+    document
+      .getElementById(
+        "registerBox"
+      )
+      .classList.add(
+        "hidden"
+      );
+
+    showInfo();
+
+    checkDevice();
+
+    setInterval(
+      checkDevice,
+      4000
+    );
+
+    setInterval(
+      heartbeat,
+      10000
+    );
+
+    setInterval(
+      pollSignal,
+      1800
+    );
+
+  }
+);
+
+
+/* =====================================================
+   REGISTER
+===================================================== */
+
+async function registerDevice(){
+
+  const name =
+    document
+      .getElementById(
+        "deviceName"
+      )
+      .value.trim();
+
+  gmail =
+    document
+      .getElementById(
+        "gmail"
+      )
+      .value
+      .trim()
+      .toLowerCase();
+
+  if(!gmail){
+
+    alert(
+      "Gmail address required."
+    );
+
+    return;
+
+  }
+
+  if(!deviceId){
+
+    deviceId =
+      "MIC-" +
+      crypto.randomUUID();
+
+  }
+
+  try{
+
+    const result =
+      await api(
+        "registerDevice",
+        {
+          deviceId:
+            deviceId,
+
+          deviceName:
+            name ||
+            "Wireless Mic",
+
+          gmail:
+            gmail
+        }
+      );
+
+    if(!result.success){
+
+      alert(
+        result.message
+      );
+
+      return;
+
+    }
+
+    localStorage.setItem(
+      "WIRELESS_MIC_DEVICE_ID",
+      deviceId
+    );
+
+    localStorage.setItem(
+      "WIRELESS_MIC_GMAIL",
+      gmail
+    );
+
+    deviceNo =
+      result.deviceNo;
+
+    if(deviceNo){
+
+      localStorage.setItem(
+        "WIRELESS_MIC_DEVICE_NO",
+        deviceNo
+      );
+
+    }
+
+    showInfo();
+
+    document
+      .getElementById(
+        "registerBox"
+      )
+      .classList.add(
+        "hidden"
+      );
+
+    document
+      .getElementById(
+        "verifyBox"
+      )
+      .classList.remove(
+        "hidden"
+      );
+
+    setApproval(
+      "GMAIL VERIFICATION"
+    );
+
+  }catch(e){
+
+    alert(
+      e.message
+    );
+
+  }
+
+}
+
+
+/* =====================================================
+   VERIFY
+===================================================== */
+
+async function verifyGmail(){
+
+  const code =
+    document
+      .getElementById(
+        "verifyCode"
+      )
+      .value.trim();
+
+  if(
+    code.length !== 6
+  ){
+
+    alert(
+      "Enter 6 digit code."
+    );
+
+    return;
+
+  }
+
+  try{
+
+    const result =
+      await api(
+        "verifyGmail",
+        {
+          deviceId:
+            deviceId,
+
+          code:
+            code
+        }
+      );
+
+    if(!result.success){
+
+      alert(
+        result.message
+      );
+
+      return;
+
+    }
+
+    document
+      .getElementById(
+        "verifyBox"
+      )
+      .classList.add(
+        "hidden"
+      );
+
+    setApproval(
+      "WAITING FOR ADMIN"
+    );
+
+    checkDevice();
+
+  }catch(e){
+
+    alert(
+      e.message
+    );
+
+  }
+
+}
+
+
+/* =====================================================
+   CHECK
+===================================================== */
+
+async function checkDevice(){
+
+  if(!deviceId)
+    return;
+
+  try{
+
+    const result =
+      await api(
+        "checkDevice",
+        {
+          deviceId:
+            deviceId
+        }
+      );
+
+    if(
+      !result.registered
+    ){
+
+      setApproval(
+        "NOT REGISTERED"
+      );
+
+      return;
+
+    }
+
+    deviceNo =
+      result.deviceNo;
+
+    localStorage.setItem(
+      "WIRELESS_MIC_DEVICE_NO",
+      deviceNo
+    );
+
+    showInfo(
+      result.deviceName
+    );
+
+    approved =
+      result.status ===
+      "APPROVED";
+
+    adminMic =
+      result.mic ===
+      "ON";
+
+
+    if(
+      result.status ===
+      "BLOCKED"
+    ){
+
+      setApproval(
+        "⛔ BLOCKED"
+      );
+
+      setOnline(false);
+
+      hideMic();
+
+      stopMic();
+
+      return;
+
+    }
+
+
+    if(
+      result.verified !==
+      "YES"
+    ){
+
+      setApproval(
+        "VERIFY GMAIL"
+      );
+
+      hideMic();
+
+      return;
+
+    }
+
+
+    if(
+      result.status !==
+      "APPROVED"
+    ){
+
+      setApproval(
+        "WAITING FOR APPROVAL"
+      );
+
+      hideMic();
+
+      return;
+
+    }
+
+
+    setApproval(
+      "✓ APPROVED"
+    );
+
+
+    showMic();
+
+
+    if(
+      adminMic
+    ){
+
+      if(!stream){
+
+        await requestMicrophone();
+
+      }
+
+      if(stream){
+
+        setOnline(true);
+
+        startWebRTCIfRequested();
+
+      }
+
+    }else{
+
+      setOnline(
+        remoteConnected
+      );
+
+      stopMic();
+
+    }
+
+  }catch(e){
+
+    console.error(e);
+
+  }
+
+}
+
+
+/* =====================================================
+   REQUEST MICROPHONE
+===================================================== */
+
+async function requestMicrophone(){
+
+  if(
+    stream ||
+    busyPermission
+  )
+    return;
+
+  busyPermission=true;
+
+  try{
+
+    stream =
+      await navigator
+        .mediaDevices
+        .getUserMedia({
+
+          audio:{
+            echoCancellation:true,
+            noiseSuppression:true,
+            autoGainControl:true,
+            channelCount:1
+          },
+
+          video:false
+
+        });
+
+
+    setupAudio();
+
+    setOnline(true);
+
+    updateMicButton();
+
+  }catch(e){
+
+    console.error(e);
+
+    setOnline(false);
+
+    alert(
+      "Microphone permission is required."
+    );
+
+  }
+
+  busyPermission=false;
+
+}
+
+
+/* =====================================================
+   AUDIO SETUP
+===================================================== */
+
+function setupAudio(){
+
+  audioContext =
+    new (
+      window.AudioContext ||
+      window.webkitAudioContext
+    )();
+
+
+  sourceNode =
+    audioContext
+      .createMediaStreamSource(
+        stream
+      );
+
+
+  gainNode =
+    audioContext
+      .createGain();
+
+
+  analyser =
+    audioContext
+      .createAnalyser();
+
+
+  analyser.fftSize=256;
+
+
+  sourceNode.connect(
+    gainNode
+  );
+
+
+  gainNode.connect(
+    analyser
+  );
+
+
+  drawVisualizer();
+
+}
+
+
+/* =====================================================
+   MIC TOGGLE
+===================================================== */
+
+async function toggleMic(){
+
+  if(!approved){
+
+    alert(
+      "Device is not approved."
+    );
+
+    return;
+
+  }
+
+  if(!adminMic){
+
+    alert(
+      "Admin must turn MIC ON first."
+    );
+
+    return;
+
+  }
+
+  if(!stream){
+
+    await requestMicrophone();
+
+    if(
+      stream
+    ){
+
+      startWebRTCIfRequested();
+
+    }
+
+    return;
+
+  }
+
+  stopMic();
+
+}
+
+
+/* =====================================================
+   STOP MIC
+===================================================== */
+
+function stopMic(){
+
+  if(
+    peer
+  ){
+
+    try{
+      peer.close();
+    }catch(e){}
+
+    peer=null;
+
+  }
+
+  remoteConnected=false;
+
+  if(
+    stream
+  ){
+
+    stream
+      .getTracks()
+      .forEach(
+        t =>
+          t.stop()
+      );
+
+    stream=null;
+
+  }
+
+  if(
+    audioContext
+  ){
+
+    audioContext
+      .close()
+      .catch(()=>{});
+
+    audioContext=null;
+
+  }
+
+  sourceNode=null;
+
+  gainNode=null;
+
+  analyser=null;
+
+  if(animation){
+
+    cancelAnimationFrame(
+      animation
+    );
+
+    animation=null;
+
+  }
+
+  setOnline(false);
+
+  updateMicButton();
+
+}
+
+
+/* =====================================================
+   VOLUME
+===================================================== */
+
+function changeVolume(){
+
+  const value =
+    Number(
+      document
+        .getElementById(
+          "inputVolume"
+        )
+        .value
+    );
+
+
+  document
+    .getElementById(
+      "volumeValue"
+    )
+    .innerText =
+    value + "%";
+
+
+  if(
+    gainNode
+  ){
+
+    gainNode.gain.value =
+      value / 100;
+
+  }
+
+}
+
+
+/* =====================================================
+   WEBRTC
+===================================================== */
+
+function createPeer(){
+
+  if(peer){
+
+    try{
+      peer.close();
+    }catch(e){}
+
+  }
+
+  peer =
+    new RTCPeerConnection({
+
+      iceServers:[
+
+        {
+          urls:
+            "stun:stun.l.google.com:19302"
+        },
+
+        {
+          urls:
+            "stun:stun1.l.google.com:19302"
+        }
+
+      ]
+
+    });
+
+
+  if(stream){
+
+    stream
+      .getTracks()
+      .forEach(
+        track => {
+
+          peer.addTrack(
+            track,
+            stream
+          );
+
+        }
+      );
+
+  }
+
+
+  peer.onconnectionstatechange =
+    () => {
+
+      const state =
+        peer.connectionState;
+
+      if(
+        state ===
+        "connected"
+      ){
+
+        remoteConnected=true;
+
+        setOnline(true);
+
+      }
+
+      if(
+        state ===
+        "failed" ||
+        state ===
+        "disconnected" ||
+        state ===
+        "closed"
+      ){
+
+        remoteConnected=false;
+
+      }
+
+    };
+
+}
+
+
+/* =====================================================
+   START WEBRTC
+===================================================== */
+
+async function startWebRTCIfRequested(){
+
+  if(
+    !stream
+  )
+    return;
+
+  try{
+
+    const result =
+      await api(
+        "getSignal",
+        {
+          deviceId:
+            deviceId
+        }
+      );
+
+    const signal =
+      result.signal;
+
+    if(
+      !signal ||
+      signal.state !==
+      "REQUESTED"
+    )
+      return;
+
+    currentSession =
+      signal.sessionId;
+
+    createPeer();
+
+
+    const offer =
+      await peer.createOffer({
+
+        offerToReceiveAudio:false
+
+      });
+
+
+    await peer.setLocalDescription(
+      offer
+    );
+
+
+    await waitForIce();
+
+
+    await api(
+      "sendSignal",
+      {
+
+        deviceId:
+          deviceId,
+
+        signal:{
+
+          type:"offer",
+
+          sessionId:
+            currentSession,
+
+          sdp:
+            peer.localDescription.sdp
+
+        }
+
+      }
+    );
+
+
+  }catch(e){
+
+    console.error(e);
+
+  }
+
+}
+
+
+/* =====================================================
+   POLL SIGNAL
+===================================================== */
+
+async function pollSignal(){
+
+  if(!deviceId)
+    return;
+
+  if(
+    !approved ||
+    !adminMic
+  )
+    return;
+
+  try{
+
+    const result =
+      await api(
+        "getSignal",
+        {
+          deviceId:
+            deviceId
+        }
+      );
+
+    const signal =
+      result.signal;
+
+    if(!signal)
+      return;
+
+
+    if(
+      signal.state ===
+      "REQUESTED"
+    ){
+
+      if(
+        stream
+      ){
+
+        startWebRTCIfRequested();
+
+      }
+
+      return;
+
+    }
+
+
+    if(
+      signal.state ===
+      "ANSWER"
+    ){
+
+      if(
+        !peer ||
+        !signal.answer
+      )
+        return;
+
+      if(
+        peer.signalingState ===
+        "have-local-offer"
+      ){
+
+        await peer.setRemoteDescription({
+
+          type:"answer",
+
+          sdp:
+            signal.answer
+
+        });
+
+      }
+
+    }
+
+  }catch(e){
+
+    console.error(e);
+
+  }
+
+}
+
+
+/* =====================================================
+   ICE WAIT
+===================================================== */
+
+function waitForIce(){
+
+  return new Promise(
+    resolve => {
+
+      if(
+        !peer
+      ){
+
+        resolve();
+
+        return;
+
+      }
+
+      if(
+        peer.iceGatheringState ===
+        "complete"
+      ){
+
+        resolve();
+
+        return;
+
+      }
+
+      const timeout =
+        setTimeout(
+          resolve,
+          5000
+        );
+
+      peer.onicegatheringstatechange =
+        () => {
+
+          if(
+            peer.iceGatheringState ===
+            "complete"
+          ){
+
+            clearTimeout(
+              timeout
+            );
+
+            resolve();
+
+          }
+
+        };
+
+    }
+  );
+
+}
+
+
+/* =====================================================
+   HEARTBEAT
+===================================================== */
+
+async function heartbeat(){
+
+  if(!deviceId)
+    return;
+
+  const send =
+    async data => {
+
+      try{
+
+        await api(
+          "heartbeat",
+          data
+        );
+
+      }catch(e){}
+
+    };
+
+
+  if(
+    navigator.geolocation
+  ){
+
+    navigator
+      .geolocation
+      .getCurrentPosition(
+
+        p => {
+
+          send({
+
+            deviceId:
+              deviceId,
+
+            latitude:
+              p.coords.latitude,
+
+            longitude:
+              p.coords.longitude,
+
+            accuracy:
+              p.coords.accuracy,
+
+            location:
+              "GPS"
+
+          });
+
+        },
+
+        () => {
+
+          send({
+            deviceId:
+              deviceId
+          });
+
+        },
+
+        {
+          enableHighAccuracy:true,
+          timeout:4000,
+          maximumAge:10000
+        }
+
+      );
+
+  }else{
+
+    send({
+      deviceId:
+        deviceId
+    });
+
+  }
+
+}
+
+
+/* =====================================================
+   VISUALIZER
+===================================================== */
+
+function drawVisualizer(){
+
+  const canvas =
+    document
+      .getElementById(
+        "visualizer"
+      );
+
+  const ctx =
+    canvas.getContext(
+      "2d"
+    );
+
+
+  function resize(){
+
+    canvas.width =
+      canvas.clientWidth *
+      devicePixelRatio;
+
+    canvas.height =
+      canvas.clientHeight *
+      devicePixelRatio;
+
+    ctx.scale(
+      devicePixelRatio,
+      devicePixelRatio
+    );
+
+  }
+
+  resize();
+
+
+  const width =
+    canvas.clientWidth;
+
+  const height =
+    canvas.clientHeight;
+
+
+  function draw(){
+
+    animation =
+      requestAnimationFrame(
+        draw
+      );
+
+
+    ctx.clearRect(
+      0,
+      0,
+      width,
+      height
+    );
+
+
+    if(
+      !analyser
+    )
+      return;
+
+
+    const data =
+      new Uint8Array(
+        analyser.fftSize
+      );
+
+
+    analyser.getByteTimeDomainData(
+      data
+    );
+
+
+    drawLine(
+      data,
+      0
+    );
+
+    drawLine(
+      data,
+      35
+    );
+
+  }
+
+
+  function drawLine(
+    data,
+    offset
+  ){
+
+    ctx.beginPath();
+
+
+    for(
+      let i=0;
+      i<data.length;
+      i++
+    ){
+
+      const x =
+        i /
+        (data.length - 1) *
+        width;
+
+      const v =
+        data[i] /
+        255;
+
+      const y =
+        offset +
+        22 +
+        (v - .5) *
+        80;
+
+
+      if(
+        i===0
+      )
+        ctx.moveTo(
+          x,
+          y
+        );
+      else
+        ctx.lineTo(
+          x,
+          y
+        );
+
+    }
+
+
+    ctx.strokeStyle =
+      `hsl(${
+        (Date.now()/8)%360
+      },100%,60%)`;
+
+    ctx.lineWidth=2;
+
+    ctx.shadowBlur=12;
+
+    ctx.shadowColor =
+      ctx.strokeStyle;
+
+    ctx.stroke();
+
+  }
+
+
+  draw();
+
+}
+
+
+/* =====================================================
+   UI
+===================================================== */
+
+function showInfo(name){
+
+  document
+    .getElementById(
+      "infoBox"
+    )
+    .classList.remove(
+      "hidden"
+    );
+
+
+  document
+    .getElementById(
+      "deviceNumber"
+    )
+    .innerText =
+    "DEVICE " +
+    (deviceNo || "-");
+
+
+  if(name){
+
+    document
+      .getElementById(
+        "deviceTitle"
+      )
+      .innerText =
+      name;
+
+  }
+
+}
+
+
+function setApproval(text){
+
+  const el =
+    document
+      .getElementById(
+        "approval"
+      );
+
+  el.innerText =
+    text;
+
+
+  if(
+    text.includes(
+      "APPROVED"
+    )
+  ){
+
+    el.className =
+      "green";
+
+  }else if(
+    text.includes(
+      "BLOCKED"
+    )
+  ){
+
+    el.className =
+      "red";
+
+  }else{
+
+    el.className =
+      "yellow";
+
+  }
+
+}
+
+
+function setOnline(online){
+
+  const el =
+    document
+      .getElementById(
+        "onlineLight"
+      );
+
+  if(online){
+
+    el.innerText =
+      "● ONLINE";
+
+    el.className =
+      "green";
+
+  }else{
+
+    el.innerText =
+      "● OFFLINE";
+
+    el.className =
+      "red";
+
+  }
+
+}
+
+
+function showMic(){
+
+  document
+    .getElementById(
+      "micButton"
+    )
+    .classList.remove(
+      "hidden"
+    );
+
+  document
+    .getElementById(
+      "volumeBox"
+    )
+    .classList.remove(
+      "hidden"
+    );
+
+}
+
+
+function hideMic(){
+
+  document
+    .getElementById(
+      "micButton"
+    )
+    .classList.add(
+      "hidden"
+    );
+
+  document
+    .getElementById(
+      "volumeBox"
+    )
+    .classList.add(
+      "hidden"
+    );
+
+}
+
+
+function updateMicButton(){
+
+  const button =
+    document
+      .getElementById(
+        "micButton"
+      );
+
+  if(
+    stream
+  ){
+
+    button.innerText =
+      "🔴 MICROPHONE ON";
+
+    button.classList.add(
+      "active"
+    );
+
+  }else{
+
+    button.innerText =
+      "🎤 MICROPHONE OFF";
+
+    button.classList.remove(
+      "active"
+    );
+
+  }
+
+}
+
+</script>
+
+</body>
+
+</html>
