@@ -1,419 +1,1094 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
 
 <meta charset="UTF-8">
 
-<meta name="viewport"
-content="width=device-width,initial-scale=1">
+<meta
+  name="viewport"
+  content="width=device-width,initial-scale=1.0"
+>
 
-<title>Wireless Mic Input</title>
+<title>Wireless Mic Device</title>
 
 <style>
 
 *{
   box-sizing:border-box;
+  margin:0;
+  padding:0;
 }
 
 body{
-  margin:0;
+
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+
   min-height:100vh;
+
+  color:#fff;
+
   background:
     radial-gradient(
       circle at top,
-      #17253b,
-      #05070b 60%
+      #17263c,
+      #070a10 55%,
+      #020305
     );
-  color:#fff;
-  font-family:Arial,sans-serif;
 
   display:flex;
+
   justify-content:center;
+
   align-items:center;
+
+  padding:15px;
+
 }
+
+button,
+input{
+  font:inherit;
+}
+
+button{
+  cursor:pointer;
+}
+
+
+/* ================= CARD ================= */
 
 .container{
-  width:min(600px,94%);
-}
 
-.card{
-  background:
-    linear-gradient(
-      145deg,
-      #121a28,
-      #080b12
+  width:
+    min(
+      760px,
+      100%
     );
 
-  border:1px solid #263247;
+}
+
+
+.card{
+
+  background:
+    rgba(
+      12,
+      17,
+      28,
+      .9
+    );
+
+  border:
+    1px solid
+    rgba(
+      255,
+      255,
+      255,
+      .1
+    );
 
   border-radius:25px;
 
   padding:25px;
 
   box-shadow:
-    0 25px 70px
-    rgba(0,0,0,.5);
+    0 30px 90px
+    rgba(
+      0,
+      0,
+      0,
+      .55
+    );
+
+  backdrop-filter:
+    blur(15px);
+
 }
 
-h1{
-  margin-top:0;
+
+/* ================= HEADER ================= */
+
+.header{
+
+  display:flex;
+
+  align-items:center;
+
+  gap:15px;
+
+  margin-bottom:22px;
+
 }
 
-input,
-button{
+
+.icon{
+
+  width:60px;
+
+  height:60px;
+
+  border-radius:18px;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  font-size:31px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #00d9ff,
+      #684cff
+    );
+
+}
+
+
+.header h1{
+
+  font-size:23px;
+
+}
+
+
+.header p{
+
+  color:#7f8ba0;
+
+  margin-top:5px;
+
+}
+
+
+/* ================= REGISTER ================= */
+
+#registerBox{
+
+  padding:20px;
+
+  background:#080d15;
+
+  border:
+    1px solid
+    #202b3d;
+
+  border-radius:18px;
+
+}
+
+
+#registerBox h2{
+
+  margin-bottom:8px;
+
+}
+
+
+#registerBox p{
+
+  color:#7d899c;
+
+  font-size:13px;
+
+  line-height:1.6;
+
+  margin-bottom:18px;
+
+}
+
+
+.input{
+
   width:100%;
+
   padding:14px;
+
+  border-radius:12px;
+
+  border:
+    1px solid
+    #29364b;
+
+  background:#050910;
+
+  color:#fff;
+
+  outline:none;
+
+  margin-bottom:11px;
+
+}
+
+
+.primary{
+
+  width:100%;
+
+  padding:14px;
+
   border:0;
-  border-radius:13px;
-  margin:6px 0;
-  font-size:15px;
+
+  border-radius:12px;
+
+  color:white;
+
+  font-weight:bold;
+
+  background:
+    linear-gradient(
+      135deg,
+      #00c8e8,
+      #604bff
+    );
+
 }
 
-input{
-  background:#171f2e;
-  color:#fff;
+
+/* ================= DEVICE ================= */
+
+#deviceBox{
+  display:none;
 }
 
-button{
-  background:#202d43;
-  color:#fff;
-  cursor:pointer;
+
+.deviceHeader{
+
+  display:flex;
+
+  justify-content:
+    space-between;
+
+  align-items:center;
+
+  gap:15px;
+
+  padding:18px;
+
+  border-radius:17px;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(
+        0,
+        229,
+        255,
+        .07
+      ),
+      rgba(
+        100,
+        70,
+        255,
+        .07
+      )
+    );
+
+  border:
+    1px solid
+    rgba(
+      255,
+      255,
+      255,
+      .08
+    );
+
 }
 
-.green{
-  background:#087c4b;
+
+.deviceName{
+
+  font-size:22px;
+
+  font-weight:bold;
+
 }
 
-.red{
-  background:#8d1f30;
+
+.deviceId{
+
+  color:#8490a4;
+
+  font-size:13px;
+
+  margin-top:6px;
+
 }
+
 
 .status{
-  padding:16px;
-  border-radius:15px;
-  background:#0a1019;
-  margin:15px 0;
+
+  display:flex;
+
+  align-items:center;
+
+  gap:8px;
+
+  padding:
+    9px
+    12px;
+
+  border-radius:12px;
+
+  background:#111824;
+
+  color:#9aa6ba;
+
+  font-size:12px;
+
 }
 
-.light{
-  width:13px;
-  height:13px;
+
+.statusDot{
+
+  width:10px;
+
+  height:10px;
+
   border-radius:50%;
-  display:inline-block;
-  background:#555;
-  margin-right:8px;
+
+  background:#6b7484;
+
 }
 
-.greenLight{
-  background:#20ed93;
-  box-shadow:
-    0 0 16px #20ed93;
+
+.status.online{
+
+  color:#00ff8a;
+
+  background:
+    rgba(
+      0,
+      255,
+      138,
+      .08
+    );
+
 }
 
-.redLight{
-  background:#ff3450;
+
+.status.online
+.statusDot{
+
+  background:#00ff8a;
+
   box-shadow:
-    0 0 16px #ff3450;
+    0 0 13px
+    #00ff8a;
+
 }
 
-.orangeLight{
-  background:#ffbd3b;
-  box-shadow:
-    0 0 16px #ffbd3b;
+
+.status.blocked{
+
+  color:#ff536a;
+
+  background:
+    rgba(
+      255,
+      83,
+      106,
+      .08
+    );
+
 }
+
+
+.status.blocked
+.statusDot{
+
+  background:#ff536a;
+
+}
+
+
+/* ================= MIC CONTROL ================= */
+
+.micControl{
+
+  margin-top:18px;
+
+  padding:20px;
+
+  border-radius:18px;
+
+  background:#080d15;
+
+  border:
+    1px solid
+    #202b3d;
+
+}
+
+
+.powerRow{
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:
+    space-between;
+
+}
+
+
+.powerTitle{
+
+  font-size:17px;
+
+  font-weight:bold;
+
+}
+
+
+.powerSub{
+
+  color:#778499;
+
+  font-size:12px;
+
+  margin-top:5px;
+
+}
+
+
+/* SWITCH */
+
+.switch{
+
+  position:relative;
+
+  width:68px;
+
+  height:36px;
+
+}
+
+
+.switch input{
+
+  display:none;
+
+}
+
+
+.slider{
+
+  position:absolute;
+
+  inset:0;
+
+  background:#252d3b;
+
+  border-radius:40px;
+
+  cursor:pointer;
+
+}
+
+
+.slider:before{
+
+  content:"";
+
+  position:absolute;
+
+  width:28px;
+
+  height:28px;
+
+  left:4px;
+
+  top:4px;
+
+  border-radius:50%;
+
+  background:#fff;
+
+  transition:.2s;
+
+}
+
+
+.switch input:checked+
+.slider{
+
+  background:#00b879;
+
+}
+
+
+.switch input:checked+
+.slider:before{
+
+  transform:
+    translateX(32px);
+
+}
+
+
+/* ================= RANGE ================= */
+
+.rangeBox{
+
+  margin-top:20px;
+
+}
+
+
+.rangeTitle{
+
+  display:flex;
+
+  justify-content:
+    space-between;
+
+  margin-bottom:10px;
+
+}
+
+
+.rangeTitle span:last-child{
+
+  color:#00e5ff;
+
+  font-weight:bold;
+
+}
+
+
+input[type=range]{
+
+  width:100%;
+
+  accent-color:#00d9ff;
+
+}
+
+
+/* ================= VISUALIZER ================= */
 
 .visualizer{
-  height:120px;
-  display:flex;
-  align-items:center;
-  gap:3px;
-  margin:20px 0;
+
+  height:220px;
+
+  margin-top:18px;
+
+  background:#02050a;
+
+  border:
+    1px solid
+    #192436;
+
+  border-radius:18px;
+
+  overflow:hidden;
+
 }
 
-.bar{
-  flex:1;
-  min-height:4px;
-  height:4px;
-  border-radius:10px;
-  background:#20ed93;
-  transition:
-    height .06s;
+
+canvas{
+
+  width:100%;
+
+  height:100%;
+
 }
 
-.timer{
-  text-align:center;
-  font-size:22px;
+
+/* ================= TIMER ================= */
+
+.timerBox{
+
+  margin-top:18px;
+
+  padding:18px;
+
+  border-radius:17px;
+
+  background:#080d15;
+
+  border:
+    1px solid
+    #202b3d;
+
+}
+
+
+.timerTitle{
+
   font-weight:bold;
-  margin:15px 0;
+
+  margin-bottom:8px;
+
+}
+
+
+.timerStatus{
+
+  color:#00e5ff;
+
+  font-size:14px;
+
+}
+
+
+/* ================= OTP ================= */
+
+#otpBox{
+
+  display:none;
+
+  margin-top:15px;
+
+}
+
+
+#otpBox input{
+
+  text-align:center;
+
+  letter-spacing:6px;
+
+}
+
+
+/* ================= RESPONSIVE ================= */
+
+@media(max-width:600px){
+
+  .card{
+
+    padding:15px;
+
+    border-radius:20px;
+
+  }
+
+  .deviceHeader{
+
+    flex-direction:
+      column;
+
+    align-items:
+      flex-start;
+
+  }
+
+  .visualizer{
+
+    height:170px;
+
+  }
+
 }
 
 </style>
 
 </head>
 
-
 <body>
 
 
 <div class="container">
 
-
-<!-- =================================================
-     REGISTER
-================================================== -->
-
-<div
-id="registerBox"
-class="card">
-
-  <h1>
-    🎙️ WIRELESS MIC
-  </h1>
-
-  <p>
-    Register this browser as a microphone device.
-  </p>
-
-  <input
-    id="deviceName"
-    placeholder="Device Name">
-
-  <input
-    id="gmail"
-    type="email"
-    placeholder="Gmail Address">
-
-  <button
-    class="green"
-    onclick="registerDevice()">
-
-    REGISTER DEVICE
-
-  </button>
-
-  <p id="registerMessage"></p>
-
-</div>
+  <div class="card">
 
 
+    <!-- HEADER -->
 
-<!-- =================================================
-     OTP
-================================================== -->
+    <div class="header">
 
-<div
-id="otpBox"
-class="card"
-style="display:none">
+      <div class="icon">
+        🎙️
+      </div>
 
-  <h2>
-    📧 Gmail Verification
-  </h2>
+      <div>
 
-  <p>
-    আপনার Gmail-এ OTP পাঠানো হয়েছে।
-  </p>
+        <h1>
+          WIRELESS MIC DEVICE
+        </h1>
 
-  <input
-    id="otp"
-    maxlength="6"
-    placeholder="6 Digit OTP">
+        <p>
+          Secure microphone connection
+        </p>
 
-  <button
-    class="green"
-    onclick="verifyOtp()">
+      </div>
 
-    VERIFY GMAIL
-
-  </button>
-
-  <p id="otpMessage"></p>
-
-</div>
+    </div>
 
 
+    <!-- ================= REGISTER ================= -->
 
-<!-- =================================================
-     MIC PANEL
-================================================== -->
+    <div id="registerBox">
 
-<div
-id="micBox"
-class="card"
-style="display:none">
+      <h2>
+        Register Microphone
+      </h2>
 
-  <h1>
-    🎙️ MIC INPUT
-  </h1>
+      <p>
+        Register this browser as a microphone
+        device. A verification OTP will be sent
+        to the Gmail address.
+      </p>
 
 
-  <div class="status">
+      <input
+        id="deviceName"
+        class="input"
+        placeholder="Device Name"
+      >
 
-    <span
-      id="light"
-      class="light">
-    </span>
 
-    <span id="status">
-      Checking device...
-    </span>
+      <input
+        id="gmail"
+        class="input"
+        type="email"
+        placeholder="Gmail Address"
+      >
+
+
+      <button
+        class="primary"
+        onclick="registerDevice()"
+      >
+        📡 REGISTER DEVICE
+      </button>
+
+
+      <div
+        id="registerMessage"
+        style="
+          margin-top:12px;
+          color:#ff6075;
+          font-size:13px;
+        "
+      ></div>
+
+
+      <div id="otpBox">
+
+        <input
+          id="otp"
+          class="input"
+          maxlength="6"
+          inputmode="numeric"
+          placeholder="ENTER 6 DIGIT OTP"
+        >
+
+        <button
+          class="primary"
+          onclick="verifyOtp()"
+        >
+          ✅ VERIFY GMAIL
+        </button>
+
+        <button
+          style="
+            width:100%;
+            margin-top:9px;
+            padding:11px;
+            border-radius:10px;
+            border:1px solid #29364b;
+            background:#111824;
+            color:white;
+          "
+          onclick="resendOtp()"
+        >
+          📧 RESEND OTP
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- ================= DEVICE ================= -->
+
+    <div id="deviceBox">
+
+
+      <div class="deviceHeader">
+
+        <div>
+
+          <div
+            id="deviceNameView"
+            class="deviceName"
+          >
+            Microphone
+          </div>
+
+          <div
+            id="deviceIdView"
+            class="deviceId"
+          >
+            Device ID: -
+          </div>
+
+        </div>
+
+
+        <div
+          id="status"
+          class="status"
+        >
+
+          <span class="statusDot"></span>
+
+          <span id="statusText">
+            OFFLINE
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <!-- MIC POWER -->
+
+      <div class="micControl">
+
+        <div class="powerRow">
+
+          <div>
+
+            <div class="powerTitle">
+              🎙️ Microphone
+            </div>
+
+            <div
+              id="powerSub"
+              class="powerSub"
+            >
+              Microphone is OFF
+            </div>
+
+          </div>
+
+
+          <label class="switch">
+
+            <input
+              id="micSwitch"
+              type="checkbox"
+              onchange="toggleLocalMic()"
+            >
+
+            <span class="slider"></span>
+
+          </label>
+
+        </div>
+
+
+        <!-- INPUT VOLUME -->
+
+        <div class="rangeBox">
+
+          <div class="rangeTitle">
+
+            <span>
+              🎚️ Input Volume
+            </span>
+
+            <span
+              id="inputValue"
+            >
+              100%
+            </span>
+
+          </div>
+
+
+          <input
+            id="inputVolume"
+            type="range"
+            min="0"
+            max="100"
+            value="100"
+            oninput="changeInputVolume()"
+          >
+
+        </div>
+
+
+        <!-- VISUALIZER -->
+
+        <div class="visualizer">
+
+          <canvas
+            id="visualizer"
+          ></canvas>
+
+        </div>
+
+      </div>
+
+
+      <!-- TIMER -->
+
+      <div class="timerBox">
+
+        <div class="timerTitle">
+          ⏱️ Remote Timer
+        </div>
+
+        <div
+          id="timerStatus"
+          class="timerStatus"
+        >
+          No active timer
+        </div>
+
+      </div>
+
+
+      <!-- INFO -->
+
+      <div
+        style="
+          margin-top:18px;
+          text-align:center;
+          color:#657287;
+          font-size:12px;
+        "
+      >
+
+        This device is controlled by the
+        Main Controller.
+
+      </div>
+
+    </div>
 
   </div>
 
-
-  <p>
-    Device:
-    <b id="deviceNameLabel">
-    </b>
-  </p>
-
-
-  <p>
-    Device ID:
-    <b id="deviceIdLabel">
-    </b>
-  </p>
-
-
-  <div
-    id="timer"
-    class="timer">
-
-    Timer: OFF
-
-  </div>
-
-
-  <!-- VISUALIZER -->
-
-  <div
-    id="visualizer"
-    class="visualizer">
-  </div>
-
-
-  <button
-    id="micButton"
-    class="green"
-    onclick="manualMic()">
-
-    🎙️ START MICROPHONE
-
-  </button>
-
-
-  <button
-    onclick="location.reload()">
-
-    🔄 REFRESH
-
-  </button>
-
 </div>
-
-</div>
-
 
 
 <script>
 
+/* =================================================
+   IMPORTANT
+================================================= */
 
-/* =====================================================
-   GOOGLE SCRIPT URL
-===================================================== */
-
-const API =
-"https://script.google.com/macros/s/AKfycbxG0tu6VMYbRuXEZ0Kb5-6YcucFC_AHqDdMGE72lyxIslTEey-JofLhrzgQ-UK33WrC/exec";
+const API_URL =
+  "https://script.google.com/macros/s/AKfycbxno0DBH2u3l-6nDGU5DsGQOUgIuFq_i6w6HfhvSBa9_yz6NAflmusstFjepUIltwWhWQ/exec";
 
 
-/* =====================================================
-   STATE
-===================================================== */
+/* =================================================
+   GLOBALS
+================================================= */
 
-let deviceId = "";
+let deviceId =
+  localStorage.getItem(
+    "wm_device_id"
+  );
 
-let deviceName = "";
+let deviceToken =
+  localStorage.getItem(
+    "wm_device_token"
+  );
 
-let gmail = "";
+let deviceName =
+  localStorage.getItem(
+    "wm_device_name"
+  );
+
 
 let micStream = null;
 
-let peer = null;
-
 let audioContext = null;
+
+let sourceNode = null;
+
+let inputGain = null;
+
+let destination = null;
 
 let analyser = null;
 
-let running = false;
+let peerConnection = null;
 
-let currentOffer = "";
+let heartbeatTimer = null;
 
-let timerEnd = 0;
+let configTimer = null;
 
+let signalTimer = null;
 
-/* =====================================================
-   CREATE DEVICE ID
-===================================================== */
+let lastOfferAt = "";
 
-function getDeviceId(){
+let blocked = false;
 
-  let id =
-    localStorage.getItem(
-      "WIRELESS_MIC_DEVICE_ID"
-    );
+let timerEnd = null;
 
 
-  if(!id){
+/* =================================================
+   START
+================================================= */
 
-    id =
-      "MIC-" +
-      Date.now()
-        .toString(36)
-        .toUpperCase() +
-      "-" +
-      Math.random()
-        .toString(36)
-        .substring(2,8)
-        .toUpperCase();
+window.addEventListener(
+  "load",
+  async ()=>{
 
+    if(
+      deviceId &&
+      deviceToken
+    ){
 
-    localStorage.setItem(
-      "WIRELESS_MIC_DEVICE_ID",
-      id
-    );
+      showDevice();
+
+      startSystem();
+
+    }
 
   }
+);
 
 
-  return id;
+/* =================================================
+   API GET JSONP
+================================================= */
 
-}
-
-
-deviceId =
-  getDeviceId();
-
-
-/* =====================================================
-   API
-===================================================== */
-
-function api(
-  action,
-  params={}
-){
+function apiGet(params){
 
   return new Promise(
     (resolve,reject)=>{
 
       const callback =
-        "cb_" +
+        "wmdev_" +
         Date.now() +
         "_" +
-        Math.random()
-          .toString(36)
-          .substring(2,7);
+        Math.floor(
+          Math.random()*10000
+        );
+
+
+      params.callback =
+        callback;
+
+
+      params._ =
+        Date.now();
+
+
+      window[callback] =
+        function(data){
+
+          delete window[callback];
+
+          script.remove();
+
+          resolve(data);
+
+        };
 
 
       const script =
@@ -422,32 +1097,12 @@ function api(
         );
 
 
-      const query =
-        new URLSearchParams({
-
-          action:action,
-
-          callback:callback,
-
-          ...params
-
-        });
-
-
-      window[callback] =
-        data=>{
-
-          resolve(data);
-
-          script.remove();
+      script.onerror =
+        function(){
 
           delete window[callback];
 
-        };
-
-
-      script.onerror =
-        ()=>{
+          script.remove();
 
           reject(
             new Error(
@@ -455,21 +1110,125 @@ function api(
             )
           );
 
-          script.remove();
-
-          delete window[callback];
-
         };
 
 
       script.src =
-        API +
+        API_URL +
         "?" +
-        query.toString();
+        new URLSearchParams(
+          params
+        ).toString();
 
 
-      document.body.appendChild(
-        script
+      document
+        .body
+        .appendChild(
+          script
+        );
+
+    }
+  );
+
+}
+
+
+/* =================================================
+   POST FORM
+================================================= */
+
+function postForm(
+  action,
+  data
+){
+
+  return new Promise(
+    resolve=>{
+
+      const name =
+        "wmdevframe_" +
+        Date.now();
+
+
+      const iframe =
+        document.createElement(
+          "iframe"
+        );
+
+
+      iframe.name =
+        name;
+
+
+      iframe.style.display =
+        "none";
+
+
+      document.body
+        .appendChild(
+          iframe
+        );
+
+
+      const form =
+        document.createElement(
+          "form"
+        );
+
+
+      form.method =
+        "POST";
+
+
+      form.action =
+        API_URL;
+
+
+      form.target =
+        name;
+
+
+      addHidden(
+        form,
+        "action",
+        action
+      );
+
+
+      Object.keys(data)
+        .forEach(key=>{
+
+          addHidden(
+            form,
+            key,
+            data[key]
+          );
+
+        });
+
+
+      document.body
+        .appendChild(
+          form
+        );
+
+
+      form.submit();
+
+
+      setTimeout(
+        ()=>{
+
+          form.remove();
+
+          iframe.remove();
+
+          resolve({
+            success:true
+          });
+
+        },
+        1000
       );
 
     }
@@ -478,55 +1237,44 @@ function api(
 }
 
 
-/* =====================================================
-   INITIAL
-===================================================== */
+function addHidden(
+  form,
+  name,
+  value
+){
 
-async function init(){
-
-  deviceName =
-    localStorage.getItem(
-      "WIRELESS_MIC_DEVICE_NAME"
-    ) || "";
-
-
-  gmail =
-    localStorage.getItem(
-      "WIRELESS_MIC_GMAIL"
-    ) || "";
-
-
-  const r =
-    await api(
-      "status",
-      {
-        deviceId:
-          deviceId
-      }
+  const input =
+    document.createElement(
+      "input"
     );
 
 
-  if(r.ok){
+  input.type =
+    "hidden";
 
-    showMicPanel(
-      r
-    );
 
-  }
+  input.name =
+    name;
+
+
+  input.value =
+    value ?? "";
+
+
+  form.appendChild(
+    input
+  );
 
 }
 
 
-init();
-
-
-/* =====================================================
+/* =================================================
    REGISTER
-===================================================== */
+================================================= */
 
 async function registerDevice(){
 
-  deviceName =
+  const name =
     document
       .getElementById(
         "deviceName"
@@ -535,7 +1283,7 @@ async function registerDevice(){
       .trim();
 
 
-  gmail =
+  const gmail =
     document
       .getElementById(
         "gmail"
@@ -544,50 +1292,57 @@ async function registerDevice(){
       .trim();
 
 
-  if(!deviceName){
-
-    alert(
-      "Device Name দিন."
-    );
-
-    return;
-
-  }
+  const msg =
+    document
+      .getElementById(
+        "registerMessage"
+      );
 
 
-  if(!gmail){
+  if(!name){
 
-    alert(
-      "Gmail দিন."
-    );
+    msg.textContent =
+      "Device name required";
 
     return;
 
   }
 
 
-  localStorage.setItem(
-    "WIRELESS_MIC_DEVICE_NAME",
-    deviceName
-  );
+  if(
+    !gmail
+      .toLowerCase()
+      .endsWith(
+        "@gmail.com"
+      )
+  ){
+
+    msg.textContent =
+      "Valid Gmail required";
+
+    return;
+
+  }
 
 
-  localStorage.setItem(
-    "WIRELESS_MIC_GMAIL",
-    gmail
-  );
+  msg.style.color =
+    "#00e5ff";
 
 
-  const r =
-    await api(
-      "register",
-      {
+  msg.textContent =
+    "Registering device...";
 
-        deviceId:
-          deviceId,
 
-        deviceName:
-          deviceName,
+  try{
+
+    const result =
+      await apiGet({
+
+        action:
+          "register",
+
+        name:
+          name,
 
         gmail:
           gmail,
@@ -595,66 +1350,84 @@ async function registerDevice(){
         userAgent:
           navigator.userAgent
 
-      }
+      });
+
+
+    if(!result.success){
+
+      msg.style.color =
+        "#ff6075";
+
+      msg.textContent =
+        result.error;
+
+      return;
+
+    }
+
+
+    deviceId =
+      result.deviceId;
+
+
+    deviceToken =
+      result.deviceToken;
+
+
+    deviceName =
+      name;
+
+
+    localStorage.setItem(
+      "wm_device_id",
+      deviceId
     );
 
 
-  if(!r.ok){
+    localStorage.setItem(
+      "wm_device_token",
+      deviceToken
+    );
 
-    alert(r.error);
 
-    return;
+    localStorage.setItem(
+      "wm_device_name",
+      deviceName
+    );
+
+
+    msg.style.color =
+      "#00ff8a";
+
+
+    msg.textContent =
+      "Device registered. Check Gmail for OTP.";
+
+
+    document
+      .getElementById(
+        "otpBox"
+      )
+      .style.display =
+      "block";
+
+
+  }catch(error){
+
+    msg.style.color =
+      "#ff6075";
+
+    msg.textContent =
+      error.message;
 
   }
-
-
-  const otp =
-    await api(
-      "sendOtp",
-      {
-
-        deviceId:
-          deviceId,
-
-        gmail:
-          gmail
-
-      }
-    );
-
-
-  if(!otp.ok){
-
-    alert(
-      otp.error
-    );
-
-    return;
-
-  }
-
-
-  document
-    .getElementById(
-      "registerBox"
-    )
-    .style.display =
-    "none";
-
-
-  document
-    .getElementById(
-      "otpBox"
-    )
-    .style.display =
-    "block";
 
 }
 
 
-/* =====================================================
+/* =================================================
    VERIFY OTP
-===================================================== */
+================================================= */
 
 async function verifyOtp(){
 
@@ -667,56 +1440,116 @@ async function verifyOtp(){
       .trim();
 
 
-  const r =
-    await api(
-      "verifyOtp",
-      {
+  if(
+    otp.length !== 6
+  ){
 
-        deviceId:
-          deviceId,
-
-        otp:
-          otp
-
-      }
+    alert(
+      "Enter 6 digit OTP"
     );
-
-
-  if(!r.ok){
-
-    document
-      .getElementById(
-        "otpMessage"
-      )
-      .innerText =
-      r.error;
 
     return;
 
   }
 
 
-  document
-    .getElementById(
-      "otpMessage"
-    )
-    .innerText =
-    "Gmail verified. Waiting for admin approval...";
+  try{
+
+    const result =
+      await apiGet({
+
+        action:
+          "verifyOtp",
+
+        deviceId:
+          deviceId,
+
+        deviceToken:
+          deviceToken,
+
+        otp:
+          otp
+
+      });
 
 
-  setTimeout(
-    checkStatus,
-    1000
-  );
+    if(!result.success){
+
+      alert(
+        result.error
+      );
+
+      return;
+
+    }
+
+
+    alert(
+      "Gmail verified successfully"
+    );
+
+
+    showDevice();
+
+    startSystem();
+
+
+  }catch(error){
+
+    alert(
+      error.message
+    );
+
+  }
 
 }
 
 
-/* =====================================================
-   SHOW PANEL
-===================================================== */
+/* =================================================
+   RESEND OTP
+================================================= */
 
-function showMicPanel(data){
+async function resendOtp(){
+
+  try{
+
+    const result =
+      await apiGet({
+
+        action:
+          "resendOtp",
+
+        deviceId:
+          deviceId,
+
+        deviceToken:
+          deviceToken
+
+      });
+
+
+    alert(
+      result.success
+        ? "OTP sent again"
+        : result.error
+    );
+
+  }catch(error){
+
+    alert(
+      error.message
+    );
+
+  }
+
+}
+
+
+/* =================================================
+   SHOW DEVICE
+================================================= */
+
+function showDevice(){
 
   document
     .getElementById(
@@ -728,15 +1561,7 @@ function showMicPanel(data){
 
   document
     .getElementById(
-      "otpBox"
-    )
-    .style.display =
-    "none";
-
-
-  document
-    .getElementById(
-      "micBox"
+      "deviceBox"
     )
     .style.display =
     "block";
@@ -744,527 +1569,535 @@ function showMicPanel(data){
 
   document
     .getElementById(
-      "deviceNameLabel"
+      "deviceNameView"
     )
-    .innerText =
-    data.deviceName ||
-    deviceName;
+    .textContent =
+    deviceName ||
+    "Microphone";
 
 
   document
     .getElementById(
-      "deviceIdLabel"
+      "deviceIdView"
     )
-    .innerText =
+    .textContent =
+    "Device ID: " +
     deviceId;
 
+}
 
-  updateStatus(
-    data
-  );
+
+/* =================================================
+   START SYSTEM
+================================================= */
+
+function startSystem(){
+
+  sendHeartbeat();
+
+  heartbeatTimer =
+    setInterval(
+      sendHeartbeat,
+      10000
+    );
+
+
+  loadConfig();
+
+  configTimer =
+    setInterval(
+      loadConfig,
+      2000
+    );
+
+
+  startSignalPolling();
 
 }
 
 
-/* =====================================================
-   UPDATE STATUS
-===================================================== */
+/* =================================================
+   HEARTBEAT
+================================================= */
 
-function updateStatus(data){
-
-  const light =
-    document
-      .getElementById(
-        "light"
-      );
-
-
-  const status =
-    document
-      .getElementById(
-        "status"
-      );
-
+async function sendHeartbeat(){
 
   if(
-    data.status ===
-    "BLOCKED"
-  ){
-
-    light.className =
-      "light redLight";
-
-
-    status.innerText =
-      "🔴 DEVICE BLOCKED";
-
-
-    stopMic();
-
-
+    !deviceId ||
+    !deviceToken
+  )
     return;
-
-  }
-
-
-  if(
-    data.status ===
-    "APPROVED"
-  ){
-
-    light.className =
-      "light greenLight";
-
-
-    if(
-      data.mic ===
-      "ON"
-    ){
-
-      status.innerText =
-        "🟢 MIC ON";
-
-    }else{
-
-      status.innerText =
-        "🟢 APPROVED — MIC OFF";
-
-    }
-
-
-    return;
-
-  }
-
-
-  light.className =
-    "light orangeLight";
-
-
-  status.innerText =
-    "🟠 WAITING FOR ADMIN APPROVAL";
-
-}
-
-
-/* =====================================================
-   CHECK STATUS
-===================================================== */
-
-async function checkStatus(){
-
-  const r =
-    await api(
-      "status",
-      {
-
-        deviceId:
-          deviceId
-
-      }
-    );
-
-
-  if(!r.ok){
-
-    return;
-
-  }
-
-
-  if(
-    document
-      .getElementById(
-        "micBox"
-      )
-      .style.display ===
-    "none"
-  ){
-
-    showMicPanel(
-      r
-    );
-
-  }else{
-
-    updateStatus(
-      r
-    );
-
-  }
-
-
-  /* BLOCK */
-
-  if(
-    r.status ===
-    "BLOCKED"
-  ){
-
-    stopMic();
-
-    return;
-
-  }
-
-
-  /* ADMIN MIC ON */
-
-  if(
-    r.status ===
-    "APPROVED" &&
-    r.mic ===
-    "ON" &&
-    !running
-  ){
-
-    await startMic();
-
-  }
-
-
-  /* ADMIN MIC OFF */
-
-  if(
-    r.mic ===
-    "OFF" &&
-    running
-  ){
-
-    stopMic();
-
-  }
-
-
-  /* TIMER */
-
-  updateTimer(
-    r
-  );
-
-
-  /* WEBRTC OFFER */
-
-  await checkOffer();
-
-}
-
-
-/* =====================================================
-   START MIC
-===================================================== */
-
-async function startMic(){
-
-  if(running){
-
-    return;
-
-  }
 
 
   try{
 
-    micStream =
-      await navigator
-        .mediaDevices
-        .getUserMedia({
+    const result =
+      await apiGet({
 
-          audio:{
+        action:
+          "heartbeat",
 
-            echoCancellation:
-              false,
-
-            noiseSuppression:
-              false,
-
-            autoGainControl:
-              false
-
-          },
-
-          video:false
-
-        });
-
-
-    audioContext =
-      new AudioContext();
-
-
-    const localSource =
-      audioContext
-        .createMediaStreamSource(
-          micStream
-        );
-
-
-    analyser =
-      audioContext
-        .createAnalyser();
-
-
-    analyser.fftSize =
-      128;
-
-
-    localSource.connect(
-      analyser
-    );
-
-
-    createVisualizer();
-
-
-    running =
-      true;
-
-
-    document
-      .getElementById(
-        "micButton"
-      )
-      .innerText =
-      "🔴 MICROPHONE RUNNING";
-
-
-    await waitForOfferAndAnswer();
-
-
-  }
-  catch(e){
-
-    alert(
-      "Microphone permission required.\n\n" +
-      e.message
-    );
-
-  }
-
-}
-
-
-/* =====================================================
-   STOP MIC
-===================================================== */
-
-function stopMic(){
-
-  running =
-    false;
-
-
-  if(micStream){
-
-    micStream
-      .getTracks()
-      .forEach(
-        track =>
-          track.stop()
-      );
-
-  }
-
-
-  if(peer){
-
-    peer.close();
-
-    peer =
-      null;
-
-  }
-
-
-  if(audioContext){
-
-    audioContext.close();
-
-    audioContext =
-      null;
-
-  }
-
-
-  micStream =
-    null;
-
-
-  const button =
-    document
-      .getElementById(
-        "micButton"
-      );
-
-
-  if(button){
-
-    button.innerText =
-      "🎙️ START MICROPHONE";
-
-  }
-
-}
-
-
-/* =====================================================
-   MANUAL MIC
-===================================================== */
-
-async function manualMic(){
-
-  const r =
-    await api(
-      "status",
-      {
         deviceId:
-          deviceId
-      }
-    );
+          deviceId,
+
+        deviceToken:
+          deviceToken,
+
+        userAgent:
+          navigator.userAgent
+
+      });
 
 
-  if(
-    !r.ok
-  ){
+    if(!result.success){
 
-    return;
-
-  }
-
-
-  if(
-    r.status !==
-    "APPROVED"
-  ){
-
-    alert(
-      "Admin approval required."
-    );
-
-    return;
-
-  }
-
-
-  if(running){
-
-    stopMic();
-
-  }else{
-
-    await startMic();
-
-  }
-
-}
-
-
-/* =====================================================
-   WEBRTC
-===================================================== */
-
-async function waitForOfferAndAnswer(){
-
-  for(
-    let i=0;
-    i<30;
-    i++
-  ){
-
-    if(
-      !running
-    ){
+      setStatus(
+        "OFFLINE"
+      );
 
       return;
 
     }
 
 
-    const r =
-      await api(
-        "getSignal",
-        {
+    if(
+      result.status ===
+      "BLOCKED"
+    ){
 
-          deviceId:
-            deviceId
+      blocked = true;
 
-        }
+      stopMic();
+
+      setStatus(
+        "BLOCKED"
       );
+
+      return;
+
+    }
+
+
+    blocked = false;
+
+    setStatus(
+      "ONLINE"
+    );
+
+
+  }catch(error){
+
+    setStatus(
+      "OFFLINE"
+    );
+
+  }
+
+}
+
+
+/* =================================================
+   CONFIG
+================================================= */
+
+async function loadConfig(){
+
+  if(
+    !deviceId ||
+    !deviceToken
+  )
+    return;
+
+
+  try{
+
+    const result =
+      await apiGet({
+
+        action:
+          "getConfig",
+
+        deviceId:
+          deviceId,
+
+        deviceToken:
+          deviceToken
+
+      });
+
+
+    if(!result.success){
+
+      return;
+
+    }
 
 
     if(
-      r.ok &&
-      r.offer
+      result.status ===
+      "BLOCKED"
     ){
 
-      if(
-        r.offer !==
-        currentOffer
-      ){
+      blocked = true;
 
-        currentOffer =
-          r.offer;
+      stopMic();
+
+      setStatus(
+        "BLOCKED"
+      );
+
+      return;
+
+    }
 
 
-        await answerOffer(
-          r.offer
+    blocked = false;
+
+
+    /*
+     Remote Mic ON/OFF
+    */
+
+    const remoteMic =
+      !!result.micOn;
+
+
+    document
+      .getElementById(
+        "micSwitch"
+      )
+      .checked =
+      remoteMic;
+
+
+    if(
+      remoteMic &&
+      !micStream
+    ){
+
+      await startMic();
+
+    }
+
+
+    if(
+      !remoteMic &&
+      micStream
+    ){
+
+      muteMic();
+
+    }
+
+
+    /*
+     Input volume
+    */
+
+    if(
+      result.inputVolume !==
+      undefined
+    ){
+
+      const value =
+        Number(
+          result.inputVolume
         );
 
 
-        return;
+      document
+        .getElementById(
+          "inputVolume"
+        )
+        .value =
+        value;
+
+
+      document
+        .getElementById(
+          "inputValue"
+        )
+        .textContent =
+        value + "%";
+
+
+      if(inputGain){
+
+        inputGain.gain.value =
+          value / 100;
 
       }
 
     }
 
 
-    await sleep(
-      1000
+    /*
+     Timer
+    */
+
+    updateTimer(
+      result
     );
+
+
+  }catch(error){
+
+    console.log(error);
 
   }
 
 }
 
 
-/* =====================================================
-   CHECK OFFER
-===================================================== */
+/* =================================================
+   STATUS
+================================================= */
 
-async function checkOffer(){
+function setStatus(
+  state
+){
 
-  if(!running){
+  const box =
+    document
+      .getElementById(
+        "status"
+      );
 
-    return;
 
-  }
+  const text =
+    document
+      .getElementById(
+        "statusText"
+      );
 
 
-  const r =
-    await api(
-      "getSignal",
-      {
-
-        deviceId:
-          deviceId
-
-      }
-    );
+  box.className =
+    "status";
 
 
   if(
-    r.ok &&
-    r.offer &&
-    r.offer !==
-    currentOffer
+    state ===
+    "ONLINE"
   ){
 
-    currentOffer =
-      r.offer;
+    box.classList
+      .add(
+        "online"
+      );
+
+  }
 
 
-    await answerOffer(
-      r.offer
+  if(
+    state ===
+    "BLOCKED"
+  ){
+
+    box.classList
+      .add(
+        "blocked"
+      );
+
+  }
+
+
+  text.textContent =
+    state;
+
+}
+
+
+/* =================================================
+   LOCAL MIC SWITCH
+================================================= */
+
+async function toggleLocalMic(){
+
+  if(blocked){
+
+    document
+      .getElementById(
+        "micSwitch"
+      )
+      .checked =
+      false;
+
+    return;
+
+  }
+
+
+  const on =
+    document
+      .getElementById(
+        "micSwitch"
+      )
+      .checked;
+
+
+  if(on){
+
+    await startMic();
+
+  }else{
+
+    muteMic();
+
+  }
+
+}
+
+
+/* =================================================
+   START MIC
+================================================= */
+
+async function startMic(){
+
+  if(blocked)
+    return;
+
+
+  try{
+
+    if(!audioContext){
+
+      audioContext =
+        new (
+          window.AudioContext ||
+          window.webkitAudioContext
+        )();
+
+    }
+
+
+    await audioContext.resume();
+
+
+    if(!micStream){
+
+      micStream =
+        await navigator
+          .mediaDevices
+          .getUserMedia({
+
+            audio:{
+
+              echoCancellation:false,
+
+              noiseSuppression:false,
+
+              autoGainControl:false
+
+            }
+
+          });
+
+
+      sourceNode =
+        audioContext
+          .createMediaStreamSource(
+            micStream
+          );
+
+
+      inputGain =
+        audioContext
+          .createGain();
+
+
+      destination =
+        audioContext
+          .createMediaStreamDestination();
+
+
+      analyser =
+        audioContext
+          .createAnalyser();
+
+
+      analyser.fftSize =
+        2048;
+
+
+      sourceNode.connect(
+        inputGain
+      );
+
+
+      inputGain.connect(
+        destination
+      );
+
+
+      sourceNode.connect(
+        analyser
+      );
+
+
+      /*
+       WebRTC-তে processed audio পাঠাবে
+      */
+
+      createMicPeer();
+
+      drawVisualizer();
+
+    }
+
+
+    const volume =
+      Number(
+        document
+          .getElementById(
+            "inputVolume"
+          )
+          .value
+      ) / 100;
+
+
+    inputGain.gain.value =
+      volume;
+
+
+    /*
+     Mic track enable
+    */
+
+    micStream
+      .getAudioTracks()
+      .forEach(
+        track=>{
+          track.enabled =
+            true;
+        }
+      );
+
+
+    document
+      .getElementById(
+        "powerSub"
+      )
+      .textContent =
+      "Microphone is ON";
+
+
+  }catch(error){
+
+    console.error(error);
+
+
+    document
+      .getElementById(
+        "micSwitch"
+      )
+      .checked =
+      false;
+
+
+    alert(
+      "Microphone permission required.\n\n" +
+      error.message
     );
 
   }
@@ -1272,127 +2105,422 @@ async function checkOffer(){
 }
 
 
-/* =====================================================
-   ANSWER OFFER
-===================================================== */
+/* =================================================
+   MUTE MIC
+================================================= */
 
-async function answerOffer(
-  offerData
-){
+function muteMic(){
 
-  if(!micStream){
+  if(
+    micStream
+  ){
 
+    micStream
+      .getAudioTracks()
+      .forEach(
+        track=>{
+          track.enabled =
+            false;
+        }
+      );
+
+  }
+
+
+  if(inputGain){
+
+    inputGain.gain.value =
+      0;
+
+  }
+
+
+  document
+    .getElementById(
+      "powerSub"
+    )
+    .textContent =
+    "Microphone is OFF";
+
+}
+
+
+/* =================================================
+   STOP MIC
+================================================= */
+
+function stopMic(){
+
+  if(
+    micStream
+  ){
+
+    micStream
+      .getTracks()
+      .forEach(
+        track=>{
+          track.stop();
+        }
+      );
+
+    micStream =
+      null;
+
+  }
+
+
+  if(peerConnection){
+
+    try{
+      peerConnection.close();
+    }catch(e){}
+
+    peerConnection =
+      null;
+
+  }
+
+
+  document
+    .getElementById(
+      "micSwitch"
+    )
+    .checked =
+    false;
+
+
+  document
+    .getElementById(
+      "powerSub"
+    )
+    .textContent =
+    "Microphone is OFF";
+
+}
+
+
+/* =================================================
+   INPUT VOLUME
+================================================= */
+
+function changeInputVolume(){
+
+  const value =
+    Number(
+      document
+        .getElementById(
+          "inputVolume"
+        )
+        .value
+    );
+
+
+  document
+    .getElementById(
+      "inputValue"
+    )
+    .textContent =
+    value + "%";
+
+
+  if(inputGain){
+
+    inputGain.gain.value =
+      value / 100;
+
+  }
+
+}
+
+
+/* =================================================
+   CREATE MIC WEBRTC
+================================================= */
+
+async function createMicPeer(){
+
+  if(
+    !destination
+  )
     return;
 
+
+  if(peerConnection){
+
+    try{
+      peerConnection.close();
+    }catch(e){}
+
   }
 
 
-  if(peer){
-
-    peer.close();
-
-  }
-
-
-  peer =
+  peerConnection =
     new RTCPeerConnection({
 
       iceServers:[
-
         {
           urls:
-          "stun:stun.l.google.com:19302"
-        },
-
-        {
-          urls:
-          "stun:stun1.l.google.com:19302"
+            "stun:stun.l.google.com:19302"
         }
-
       ]
 
     });
 
 
-  micStream
-    .getTracks()
+  /*
+   Processed microphone stream
+   WebRTC-তে পাঠাবে
+  */
+
+  destination
+    .stream
+    .getAudioTracks()
     .forEach(
       track=>{
 
-        peer.addTrack(
-          track,
-          micStream
-        );
+        peerConnection
+          .addTrack(
+            track,
+            destination.stream
+          );
 
       }
     );
 
 
-  await peer
-    .setRemoteDescription(
-      JSON.parse(
-        offerData
-      )
+  peerConnection
+    .onconnectionstatechange =
+    ()=>{
+
+      console.log(
+        "Mic WebRTC:",
+        peerConnection
+          .connectionState
+      );
+
+    };
+
+}
+
+
+/* =================================================
+   SIGNAL POLLING
+================================================= */
+
+function startSignalPolling(){
+
+  if(signalTimer){
+
+    clearInterval(
+      signalTimer
+    );
+
+  }
+
+
+  signalTimer =
+    setInterval(
+      checkOffer,
+      1200
     );
 
 
+  checkOffer();
+
+}
+
+
+/* =================================================
+   CHECK OFFER
+================================================= */
+
+async function checkOffer(){
+
+  if(
+    blocked ||
+    !deviceId ||
+    !deviceToken
+  )
+    return;
+
+
+  try{
+
+    const result =
+      await apiGet({
+
+        action:
+          "getSignal",
+
+        role:
+          "device",
+
+        deviceId:
+          deviceId,
+
+        deviceToken:
+          deviceToken
+
+      });
+
+
+    if(
+      !result.success
+    )
+      return;
+
+
+    if(
+      result.blocked
+    ){
+
+      blocked = true;
+
+      stopMic();
+
+      setStatus(
+        "BLOCKED"
+      );
+
+      return;
+
+    }
+
+
+    if(
+      !result.offer ||
+      !result.offerAt
+    )
+      return;
+
+
+    if(
+      result.offerAt ===
+      lastOfferAt
+    )
+      return;
+
+
+    lastOfferAt =
+      result.offerAt;
+
+
+    /*
+     Mic must be ON/available
+     before answering.
+    */
+
+    if(!micStream){
+
+      await startMic();
+
+    }
+
+
+    await answerOffer(
+      result.offer
+    );
+
+
+  }catch(error){
+
+    console.log(
+      "Offer error:",
+      error
+    );
+
+  }
+
+}
+
+
+/* =================================================
+   ANSWER OFFER
+================================================= */
+
+async function answerOffer(
+  offerSdp
+){
+
+  if(!micStream){
+
+    await startMic();
+
+  }
+
+
+  if(!destination)
+    return;
+
+
+  await createMicPeer();
+
+
+  await peerConnection
+    .setRemoteDescription({
+
+      type:
+        "offer",
+
+      sdp:
+        offerSdp
+
+    });
+
+
   const answer =
-    await peer
+    await peerConnection
       .createAnswer();
 
 
-  await peer
+  await peerConnection
     .setLocalDescription(
       answer
     );
 
 
-  await waitICE();
+  await waitForIce();
 
 
-  await api(
-    "signal",
+  await postForm(
+    "saveAnswer",
     {
 
       deviceId:
         deviceId,
 
-      type:
-        "answer",
+      deviceToken:
+        deviceToken,
 
-      data:
-        JSON.stringify(
-          peer.localDescription
-        )
+      answer:
+        peerConnection
+          .localDescription
+          .sdp
 
     }
+  );
+
+
+  setStatus(
+    "ONLINE"
   );
 
 }
 
 
-/* =====================================================
+/* =================================================
    WAIT ICE
-===================================================== */
+================================================= */
 
-function waitICE(){
+function waitForIce(){
 
   return new Promise(
     resolve=>{
 
       if(
-        !peer
-      ){
-
-        resolve();
-
-        return;
-
-      }
-
-
-      if(
-        peer.iceGatheringState ===
+        !peerConnection ||
+        peerConnection
+          .iceGatheringState ===
         "complete"
       ){
 
@@ -1403,37 +2531,34 @@ function waitICE(){
       }
 
 
-      const check =
-        ()=>{
-
-          if(
-            peer.iceGatheringState ===
-            "complete"
-          ){
-
-            peer.removeEventListener(
-              "icegatheringstatechange",
-              check
-            );
+      const timeout =
+        setTimeout(
+          resolve,
+          6000
+        );
 
 
-            resolve();
+      peerConnection
+        .addEventListener(
+          "icegatheringstatechange",
+          function(){
+
+            if(
+              peerConnection
+                .iceGatheringState ===
+              "complete"
+            ){
+
+              clearTimeout(
+                timeout
+              );
+
+              resolve();
+
+            }
 
           }
-
-        };
-
-
-      peer.addEventListener(
-        "icegatheringstatechange",
-        check
-      );
-
-
-      setTimeout(
-        resolve,
-        5000
-      );
+        );
 
     }
   );
@@ -1441,185 +2566,110 @@ function waitICE(){
 }
 
 
-/* =====================================================
-   VISUALIZER
-===================================================== */
-
-function createVisualizer(){
-
-  const box =
-    document
-      .getElementById(
-        "visualizer"
-      );
-
-
-  box.innerHTML =
-    "";
-
-
-  for(
-    let i=0;
-    i<45;
-    i++
-  ){
-
-    const bar =
-      document.createElement(
-        "div"
-      );
-
-
-    bar.className =
-      "bar";
-
-
-    box.appendChild(
-      bar
-    );
-
-  }
-
-
-  animateVisualizer();
-
-}
-
-
-/* =====================================================
-   ANIMATE
-===================================================== */
-
-function animateVisualizer(){
-
-  if(!analyser){
-
-    return;
-
-  }
-
-
-  const data =
-    new Uint8Array(
-      analyser.frequencyBinCount
-    );
-
-
-  analyser
-    .getByteFrequencyData(
-      data
-    );
-
-
-  const bars =
-    document
-      .querySelectorAll(
-        ".bar"
-      );
-
-
-  bars.forEach(
-    (bar,i)=>{
-
-      const value =
-        data[
-          i % data.length
-        ] || 0;
-
-
-      bar.style.height =
-        Math.max(
-          4,
-          value / 1.7
-        ) +
-        "px";
-
-    }
-  );
-
-
-  requestAnimationFrame(
-    animateVisualizer
-  );
-
-}
-
-
-/* =====================================================
+/* =================================================
    TIMER
-===================================================== */
+================================================= */
 
-function updateTimer(data){
+function updateTimer(
+  config
+){
 
-  const timer =
+  const enabled =
+    !!config.timerEnabled;
+
+
+  const status =
     document
       .getElementById(
-        "timer"
+        "timerStatus"
       );
 
 
   if(
-    !data.timerEnabled ||
-    !data.timerMinutes
+    !enabled ||
+    !config.timerStartedAt ||
+    !config.timerMinutes
   ){
 
-    timer.innerText =
-      "Timer: OFF";
+    timerEnd =
+      null;
+
+
+    status.textContent =
+      "No active timer";
+
 
     return;
 
   }
 
 
-  if(
-    !data.timerStartedAt
-  ){
-
-    timer.innerText =
-      "Timer: " +
-      data.timerMinutes +
-      " min";
-
-    return;
-
-  }
-
-
-  const started =
+  const start =
     new Date(
-      data.timerStartedAt
+      config.timerStartedAt
     ).getTime();
 
 
-  const end =
-    started +
+  timerEnd =
+    start +
     Number(
-      data.timerMinutes
+      config.timerMinutes
     ) *
     60000;
 
 
+  updateTimerDisplay();
+
+}
+
+
+function updateTimerDisplay(){
+
+  const status =
+    document
+      .getElementById(
+        "timerStatus"
+      );
+
+
+  if(
+    !timerEnd
+  ){
+
+    status.textContent =
+      "No active timer";
+
+    return;
+
+  }
+
+
   const remaining =
-    Math.max(
-      0,
-      end -
-      Date.now()
-    );
+    timerEnd -
+    Date.now();
 
 
   if(
     remaining <= 0
   ){
 
-    timer.innerText =
-      "⏱️ TIMER FINISHED";
+    status.textContent =
+      "⏰ Timer finished";
 
 
-    if(running){
+    muteMic();
 
-      stopMic();
 
-    }
+    document
+      .getElementById(
+        "micSwitch"
+      )
+      .checked =
+      false;
+
+
+    timerEnd =
+      null;
 
 
     return;
@@ -1627,235 +2677,235 @@ function updateTimer(data){
   }
 
 
-  const totalSeconds =
+  let seconds =
     Math.floor(
       remaining / 1000
     );
 
 
-  const minutes =
+  const days =
     Math.floor(
-      totalSeconds / 60
+      seconds /
+      86400
     );
 
 
-  const seconds =
-    totalSeconds % 60;
+  seconds %=
+    86400;
 
 
-  timer.innerText =
-    "⏱️ " +
-    minutes +
+  const hours =
+    Math.floor(
+      seconds /
+      3600
+    );
+
+
+  seconds %=
+    3600;
+
+
+  const minutes =
+    Math.floor(
+      seconds /
+      60
+    );
+
+
+  seconds %=
+    60;
+
+
+  status.textContent =
+
+    "⏱️ Remaining: " +
+
+    (days > 0
+      ? days + "d "
+      : "") +
+
+    String(hours)
+      .padStart(2,"0") +
     ":" +
+
+    String(minutes)
+      .padStart(2,"0") +
+    ":" +
+
     String(seconds)
       .padStart(2,"0");
 
 }
 
 
-/* =====================================================
-   HEARTBEAT
-===================================================== */
-
-async function heartbeat(){
-
-  if(!deviceId){
-
-    return;
-
-  }
-
-
-  const r =
-    await api(
-      "heartbeat",
-      {
-
-        deviceId:
-          deviceId
-
-      }
-    );
-
-
-  if(!r.ok){
-
-    return;
-
-  }
-
-
-  updateStatus(
-    r
-  );
-
-
-  if(
-    r.status ===
-    "BLOCKED"
-  ){
-
-    stopMic();
-
-    return;
-
-  }
-
-
-  if(
-    r.status ===
-    "APPROVED" &&
-    r.mic ===
-    "ON" &&
-    !running
-  ){
-
-    await startMic();
-
-  }
-
-
-  if(
-    r.mic ===
-    "OFF" &&
-    running
-  ){
-
-    stopMic();
-
-  }
-
-
-  updateTimer(
-    r
-  );
-
-
-  await checkOffer();
-
-}
-
-
-/* =====================================================
-   SLEEP
-===================================================== */
-
-function sleep(ms){
-
-  return new Promise(
-    resolve =>
-      setTimeout(
-        resolve,
-        ms
-      )
-  );
-
-}
-
-
-/* =====================================================
-   POLLING
-===================================================== */
-
 setInterval(
-  heartbeat,
-  3000
+  updateTimerDisplay,
+  1000
 );
 
 
-setInterval(
-  checkStatus,
-  7000
-);
+/* =================================================
+   VISUALIZER
+================================================= */
+
+function drawVisualizer(){
+
+  const canvas =
+    document
+      .getElementById(
+        "visualizer"
+      );
 
 
-async function checkStatus(){
-
-  try{
-
-    await checkStatusInternal();
-
-  }
-  catch(e){
-
-    console.log(e);
-
-  }
-
-}
-
-
-async function checkStatusInternal(){
-
-  const r =
-    await api(
-      "status",
-      {
-        deviceId:
-          deviceId
-      }
+  const ctx =
+    canvas.getContext(
+      "2d"
     );
 
 
-  if(!r.ok){
+  function resize(){
 
-    return;
+    canvas.width =
+      canvas.clientWidth *
+      devicePixelRatio;
+
+    canvas.height =
+      canvas.clientHeight *
+      devicePixelRatio;
 
   }
 
 
-  updateStatus(
-    r
+  resize();
+
+
+  window.addEventListener(
+    "resize",
+    resize
   );
 
 
-  updateTimer(
-    r
-  );
+  function draw(){
+
+    requestAnimationFrame(
+      draw
+    );
 
 
-  if(
-    r.status ===
-    "BLOCKED"
-  ){
+    ctx.clearRect(
+      0,
+      0,
+      canvas.width,
+      canvas.height
+    );
 
-    stopMic();
 
-    return;
+    if(!analyser)
+      return;
+
+
+    const data =
+      new Uint8Array(
+        analyser.fftSize
+      );
+
+
+    analyser
+      .getByteTimeDomainData(
+        data
+      );
+
+
+    const center =
+      canvas.height / 2;
+
+
+    /*
+     Double RGB-style waveform
+    */
+
+    for(
+      let line=0;
+      line<2;
+      line++
+    ){
+
+      ctx.beginPath();
+
+
+      for(
+        let i=0;
+        i<data.length;
+        i++
+      ){
+
+        const x =
+          i /
+          (data.length-1) *
+          canvas.width;
+
+
+        const wave =
+          (
+            data[i]-128
+          ) *
+          (
+            canvas.height /
+            280
+          );
+
+
+        const y =
+          center +
+          wave +
+          (
+            line === 0
+              ? -12
+              : 12
+          );
+
+
+        if(i===0){
+
+          ctx.moveTo(
+            x,
+            y
+          );
+
+        }else{
+
+          ctx.lineTo(
+            x,
+            y
+          );
+
+        }
+
+      }
+
+
+      ctx.strokeStyle =
+        line === 0
+          ? "#00e5ff"
+          : "#ff32d5";
+
+
+      ctx.lineWidth =
+        2;
+
+
+      ctx.stroke();
+
+    }
 
   }
 
 
-  if(
-    r.status ===
-    "APPROVED" &&
-    r.mic ===
-    "ON" &&
-    !running
-  ){
-
-    await startMic();
-
-  }
-
-
-  if(
-    r.mic ===
-    "OFF" &&
-    running
-  ){
-
-    stopMic();
-
-  }
-
-
-  await checkOffer();
+  draw();
 
 }
 
 </script>
 
 </body>
-
 </html>
