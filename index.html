@@ -176,9 +176,15 @@ async function buildPeerConnection(){
   });
   // The mic device is the answerer. It waits for controller offer.
   pc.onconnectionstatechange=()=>{
-    const ok=["connected","completed"].includes(pc.connectionState);
+    const state=pc.connectionState;
+    const ok=state==="connected";
     $("liveDot").classList.toggle("on",ok);
-    $("stateText").textContent=ok?"LIVE AUDIO CONNECTED":"WebRTC: "+pc.connectionState;
+    $("stateText").textContent=ok?"LIVE AUDIO CONNECTED":"WebRTC: "+state;
+    if(["failed","closed"].includes(state)){
+      try{pc.close()}catch(_){}
+      pc=null;
+      lastOfferAt="";
+    }
   };
   pc.oniceconnectionstatechange=()=>{$("stateText").textContent="WebRTC: "+pc.iceConnectionState};
   window._waitIce=offerWait;
@@ -199,6 +205,7 @@ async function answerOffer(sdp){
   if(!localStream)return;
   if(!pc)await buildPeerConnection();
   try{
+    if(audioCtx && audioCtx.state==='suspended') await audioCtx.resume().catch(()=>{});
     await pc.setRemoteDescription(JSON.parse(sdp));
     const answer=await pc.createAnswer();
     await pc.setLocalDescription(answer);
