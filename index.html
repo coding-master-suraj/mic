@@ -69,6 +69,7 @@ let deviceId=localStorage.getItem(KEY+"_id")||"";
 let deviceToken=localStorage.getItem(KEY+"_token")||"";
 let deviceName=localStorage.getItem(KEY+"_name")||"";
 let pc=null, localStream=null, audioCtx=null, source=null, gainNode=null, analyser=null, dest=null, delayNode=null, echoGain=null;
+let approvedForMic=false, approvalWatch=null;
 let micEnabled=true, lastOfferAt="", heartbeatTimer=null, configTimer=null, signalTimer=null;
 const $=id=>document.getElementById(id);
 
@@ -112,7 +113,10 @@ async function verifyOtp(){
     if(!r.success)throw new Error(r.error);
     $("verifyBox").classList.add("hidden");$("deviceBox").classList.remove("hidden");
     $("deviceTitle").textContent="Device "+deviceId+" — "+deviceName;
-    await syncConfig();await requestMic();startLoops();startSignalLoop();
+    await syncConfig();
+    startLoops();
+    startApprovalWatch();
+    startSignalLoop();
   }catch(e){$("verifyMsg").textContent=e.message}
 }
 async function resendOtp(){
@@ -122,6 +126,10 @@ async function resendOtp(){
   }catch(e){$("verifyMsg").textContent=e.message}
 }
 async function requestMic(){
+  if(!approvedForMic){
+    msg("Microphone is locked until Gmail verification and admin email approval are complete.");
+    return;
+  }
   try{
     localStream=await navigator.mediaDevices.getUserMedia({audio:{
       echoCancellation:false,noiseSuppression:false,autoGainControl:false
@@ -211,7 +219,38 @@ async function syncConfig(){
   try{
     const r=await api("getConfig",{deviceId,deviceToken});
     if(!r.success){msg(r.error);return}
-    if(r.status==="BLOCKED"){msg("This device is BLOCKED.");return}
+    if(r.status==="BLOCKED"){
+      approvedForMic=false;
+      if(localStream)localStream.getAudioTracks().forEach(t=>t.enabled=false);
+      $("liveDot").classList.remove("on");
+      $("stateText").textContent="BLOCKED";
+      msg("This device is BLOCKED.");
+      return;
+    }
+
+    const ready = !!r.canUseMic;
+    if(!ready){
+      approvedForMic=false;
+      if(localStream)localStream.getAudioTracks().forEach(t=>t.enabled=false);
+      $("liveDot").classList.remove("on");
+      $("stateText").textContent =
+        r.gmailVerified==="YES"
+          ? "WAITING FOR ADMIN EMAIL APPROVAL"
+          : "WAITING FOR GMAIL VERIFICATION + ADMIN APPROVAL";
+      msg(
+        r.gmailVerified==="YES"
+          ? "Gmail verified. Waiting for admin to approve this device by email."
+          : "Complete Gmail verification. Then wait for admin email approval."
+      );
+      return;
+    }
+
+    if(!approvedForMic){
+      approvedForMic=true;
+      msg("ADMIN APPROVED — starting microphone…");
+      await requestMic();
+    }
+
     micEnabled=!!r.micOn;
     if(localStream)localStream.getAudioTracks().forEach(t=>t.enabled=micEnabled);
     $("micBtn").textContent=micEnabled?"🎙️ MIC ON":"🔇 MIC OFF";
@@ -220,6 +259,14 @@ async function syncConfig(){
     $("deviceTitle").textContent="Device "+r.deviceId+" — "+r.deviceName;
   }catch(_){}
 }
+function startApprovalWatch(){
+  clearInterval(approvalWatch);
+  approvalWatch=setInterval(async()=>{
+    await syncConfig();
+  },2000);
+  syncConfig();
+}
+
 function startLoops(){
   clearInterval(heartbeatTimer);clearInterval(configTimer);
   heartbeatTimer=setInterval(async()=>{try{await api("heartbeat",{deviceId,deviceToken,userAgent:navigator.userAgent})}catch(_){}},10000);
@@ -254,7 +301,7 @@ window.addEventListener("beforeunload",()=>{try{pc&&pc.close()}catch(_){}});
 if(deviceId&&deviceToken){
   $("registerBox").classList.add("hidden");$("deviceBox").classList.remove("hidden");
   $("deviceTitle").textContent="Device "+deviceId+" — "+deviceName;
-  syncConfig().then(requestMic).then(()=>{startLoops();startSignalLoop()});
+  syncConfig().then(()=>{startLoops();startApprovalWatch();startSignalLoop()});
 }
 </script>
 </body>
