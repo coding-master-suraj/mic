@@ -3,18 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Wireless Mic — Premium Input</title>
+<title>Wireless Mic — Transmitter</title>
 <style>
 *{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:system-ui,-apple-system,sans-serif;color:#f1f5f9;background:#030712;display:flex;align-items:center;justify-content:center}
-body:before{content:"";position:fixed;inset:-50%;background:radial-gradient(circle at 30% 30%,rgba(99,102,241,0.15),transparent 40%),radial-gradient(circle at 70% 70%,rgba(168,85,247,0.15),transparent 40%);z-index:-1;filter:blur(60px)}
-.wrap{width:min(480px,92%);margin:auto}.card{background:rgba(15,23,42,0.8);border:1px solid rgba(255,255,255,0.08);border-radius:24px;padding:28px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.7);backdrop-filter:blur(20px)}
+.wrap{width:min(480px,92%);margin:auto}.card{background:rgba(15,23,42,0.85);border:1px solid rgba(255,255,255,0.08);border-radius:24px;padding:28px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.7);backdrop-filter:blur(20px)}
 h1{font-size:22px;margin:0 0 6px;background:linear-gradient(135deg,#818cf8,#c084fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .sub{color:#94a3b8;font-size:13px;margin-bottom:24px}
 label{font-size:11px;font-weight:600;color:#94a3b8;display:block;margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em}
-input{width:100%;padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.1);background:rgba(2,6,23,0.6);color:white;outline:none;font-size:15px;margin-bottom:16px;transition:all .2s}
-input:focus{border-color:#6366f1;box-shadow:0 0 0 3px rgba(99,102,241,0.2)}
+input{width:100%;padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.1);background:rgba(2,6,23,0.6);color:white;outline:none;font-size:15px;margin-bottom:16px}
 button{width:100%;border:0;border-radius:12px;padding:14px;font-weight:700;cursor:pointer;color:white;background:linear-gradient(135deg,#6366f1,#a855f7);box-shadow:0 10px 25px -5px rgba(99,102,241,0.4);transition:all .2s;font-size:15px}
-button:hover{opacity:.9;transform:translateY(-1px)}button.secondary{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);box-shadow:none;margin-top:8px}
+button:hover{opacity:.9}button.secondary{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);box-shadow:none;margin-top:8px}
 .status{margin:16px 0;padding:14px;border-radius:12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.05);color:#cbd5e1;font-size:13px;display:flex;align-items:center;gap:10px}
 .dot{width:10px;height:10px;border-radius:50%;background:#ef4444;box-shadow:0 0 10px #ef4444}
 .dot.on{background:#22c55e;box-shadow:0 0 15px #22c55e}
@@ -28,211 +26,207 @@ canvas{width:100%;height:100%}
 <body>
 <div class="wrap"><div class="card">
   <h1>🎙️ Wireless Mic</h1>
-  <div class="sub">High-fidelity WebRTC live mobile transmitter</div>
+  <div class="sub">WebRTC Mobile Transmitter</div>
 
   <div id="registerBox">
-    <label>Device Name</label><input id="name" placeholder="e.g. Creator Mic 1">
-    <label>Gmail Address</label><input id="gmail" type="email" placeholder="yourname@gmail.com">
-    <button onclick="registerDevice()">Register Device</button>
-    <div id="registerMsg" class="status hidden"></div>
+    <label>Device Name</label><input id="name" placeholder="e.g. My Phone Mic">
+    <label>Gmail Address</label><input id="gmail" type="email" placeholder="example@gmail.com">
+    <button onclick="register()">Register Device</button>
   </div>
 
   <div id="verifyBox" class="hidden">
     <label>Enter 6-Digit OTP</label>
     <input id="otp" inputmode="numeric" maxlength="6" placeholder="123456" style="letter-spacing:4px;text-align:center;font-size:20px">
-    <button onclick="verifyOtp()">Verify Code</button>
+    <button onclick="verify()">Verify Code</button>
     <button class="secondary" onclick="resendOtp()">Resend Code</button>
-    <div id="verifyMsg" class="status hidden"></div>
   </div>
 
   <div id="deviceBox" class="hidden">
     <div class="status"><span id="liveDot" class="dot"></span><div><b id="deviceTitle" style="display:block">Connected</b><span id="stateText" style="font-size:11px;color:#94a3b8">Ready</span></div></div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
       <button id="micBtn" onclick="toggleMic()">🎙️ Mic ON</button>
-      <button class="secondary" onclick="requestMic()">Allow Audio</button>
+      <button class="secondary" onclick="initMicStream()">Allow Audio</button>
     </div>
     <div class="meter"><canvas id="viz"></canvas></div>
     <div class="controls">
-      <div class="control"><label>Input Gain <span class="value" id="inVal">100%</span></label><input class="range" id="inVol" type="range" min="0" max="100" value="100" oninput="localInputVolume(this.value)"></div>
-      <div class="control"><label>Echo Effect <span class="value" id="echoVal">0%</span></label><input class="range" id="echo" type="range" min="0" max="100" value="0" oninput="localEcho(this.value)"></div>
+      <div class="control"><label>Input Gain <span class="value" id="inVal">100%</span></label><input class="range" id="inVol" type="range" min="0" max="100" value="100" oninput="changeInputVol(this.value)"></div>
+      <div class="control"><label>Echo Effect <span class="value" id="echoVal">0%</span></label><input class="range" id="echo" type="range" min="0" max="100" value="0" oninput="changeEcho(this.value)"></div>
     </div>
     <div id="deviceMsg" class="status hidden" style="margin-top:16px"></div>
   </div>
 </div></div>
 
 <script>
-const API = "https://script.google.com/macros/s/AKfycbxno0DBH2u3l-6nDGU5DsGQOUgIuFq_i6w6HfhvSBa9_yz6NAflmusstFjepUIltwWhWQ/exec"; // আপনার ডিপ্লয় করা Web App URL এখানে দিন
-const KEY = "WIRELESS_MIC_DEVICE_V2";
+const API = "https://script.google.com/macros/s/AKfycbxno0DBH2u3l-6nDGU5DsGQOUgIuFq_i6w6HfhvSBa9_yz6NAflmusstFjepUIltwWhWQ/exec";
+const KEY = "WIRELESS_MIC_DEVICE_NEW";
 
 let deviceId = localStorage.getItem(KEY+"_id")||"";
 let deviceToken = localStorage.getItem(KEY+"_token")||"";
 let deviceName = localStorage.getItem(KEY+"_name")||"";
-let pc=null, localStream=null, audioCtx=null, source=null, gainNode=null, analyser=null, dest=null, delayNode=null, echoGain=null;
-let approvedForMic=false, approvalWatch=null;
-let micEnabled=true, lastOfferAt="", heartbeatTimer=null, configTimer=null, signalTimer=null;
-const $=id=>document.getElementById(id);
+let pc = null, stream = null, audioCtx = null, srcNode = null, gainNode = null, analyser = null, mediaDest = null, delayNode = null, echoGain = null;
+let micActive = true, lastOffer = "", isApproved = false;
+const $ = id => document.getElementById(id);
 
-function api(action,params={}){
-  return new Promise((resolve,reject)=>{
-    const cb="cb_"+Date.now()+"_"+Math.random().toString(36).slice(2);
-    window[cb]=data=>{delete window[cb];resolve(data)};
-    const q=new URLSearchParams({action,callback:cb,...params});
-    const s=document.createElement("script");
-    s.src=API+"?"+q.toString();
-    s.onerror=()=>{delete window[cb];reject(new Error("API connection failed"))};
+function callApi(action, params = {}) {
+  return new Promise((resolve, reject) => {
+    const cb = "cb_" + Date.now() + "_" + Math.random().toString(36).slice(2);
+    window[cb] = data => { delete window[cb]; resolve(data); };
+    const q = new URLSearchParams({ action, callback: cb, ...params });
+    const s = document.createElement("script");
+    s.src = API + "?" + q.toString();
+    s.onerror = () => { delete window[cb]; reject(new Error("Network error")); };
     document.body.appendChild(s);
-    setTimeout(()=>{try{s.remove()}catch(_){}},15000);
+    setTimeout(() => { try { s.remove(); } catch(_) {} }, 15000);
   });
 }
-async function post(action,params={}){
-  const body=new URLSearchParams({action,...params});
-  const r=await fetch(API,{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded;charset=UTF-8"},body});
-  return r.json();
-}
-function msg(t){const m=$("deviceMsg");m.textContent=t;m.classList.remove("hidden");}
-function save(){localStorage.setItem(KEY+"_id",deviceId);localStorage.setItem(KEY+"_token",deviceToken);localStorage.setItem(KEY+"_name",deviceName)}
 
-async function registerDevice(){
-  const name=$("name").value.trim(), gmail=$("gmail").value.trim();
-  if(!name||!gmail)return alert("Enter device name and Gmail.");
-  try{
-    const r=await api("register",{name,gmail,userAgent:navigator.userAgent});
-    if(!r.success)throw new Error(r.error);
-    deviceId=String(r.deviceId);deviceToken=r.deviceToken;deviceName=name;save();
-    $("registerBox").classList.add("hidden");$("verifyBox").classList.remove("hidden");
-    const vm=$("verifyMsg");vm.textContent=r.otpSent?"OTP sent to "+gmail:"Registered, check email configuration.";vm.classList.remove("hidden");
-  }catch(e){alert(e.message)}
+async function postApi(action, params = {}) {
+  const body = new URLSearchParams({ action, ...params });
+  const res = await fetch(API, { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" }, body });
+  return res.json();
 }
 
-async function verifyOtp(){
-  const otp=$("otp").value.trim();
-  try{
-    const r=await api("verifyOtp",{deviceId,deviceToken,otp});
-    if(!r.success)throw new Error(r.error);
-    $("verifyBox").classList.add("hidden");$("deviceBox").classList.remove("hidden");
-    await syncConfig(); startLoops(); startApprovalWatch(); startSignalLoop();
-  }catch(e){alert(e.message)}
+function showMsg(txt) { const m = $("deviceMsg"); m.textContent = txt; m.classList.remove("hidden"); }
+function saveLocal() { localStorage.setItem(KEY+"_id", deviceId); localStorage.setItem(KEY+"_token", deviceToken); localStorage.setItem(KEY+"_name", deviceName); }
+
+async function register() {
+  const name = $("name").value.trim(), gmail = $("gmail").value.trim();
+  if (!name || !gmail) return alert("Please enter name and email");
+  try {
+    const r = await callApi("register", { name, gmail, userAgent: navigator.userAgent });
+    if (!r.success) throw new Error(r.error);
+    deviceId = String(r.deviceId); deviceToken = r.deviceToken; deviceName = name; saveLocal();
+    $("registerBox").classList.add("hidden"); $("verifyBox").classList.remove("hidden");
+  } catch (e) { alert(e.message); }
 }
 
-async function resendOtp(){
-  try{
-    const r=await api("resendOtp",{deviceId,deviceToken});
-    alert(r.success?"New OTP sent successfully!":r.error);
-  }catch(e){alert(e.message)}
+async function verify() {
+  const otp = $("otp").value.trim();
+  try {
+    const r = await callApi("verifyOtp", { deviceId, deviceToken, otp });
+    if (!r.success) throw new Error(r.error);
+    $("verifyBox").classList.add("hidden"); $("deviceBox").classList.remove("hidden");
+    startLoops();
+  } catch (e) { alert(e.message); }
 }
 
-async function requestMic(){
-  try{
-    localStream = await navigator.mediaDevices.getUserMedia({audio:{channelCount:1, sampleRate:48000, echoCancellation:false}});
-    setupAudio(localStream);
-    msg("Microphone access granted.");
-    await buildPeerConnection();
-  }catch(e){msg("Mic error: "+e.message)}
+async function resendOtp() {
+  const r = await callApi("resendOtp", { deviceId, deviceToken });
+  alert(r.success ? "New OTP sent!" : r.error);
 }
 
-function setupAudio(stream){
-  if(audioCtx)try{audioCtx.close()}catch(_){}
-  audioCtx=new (window.AudioContext||window.webkitAudioContext)();
-  if(audioCtx.state==="suspended")audioCtx.resume();
-  source=audioCtx.createMediaStreamSource(stream);
-  gainNode=audioCtx.createGain(); gainNode.gain.value=Number($("inVol").value)/100;
-  analyser=audioCtx.createAnalyser(); analyser.fftSize=1024;
-  dest=audioCtx.createMediaStreamDestination();
-  
-  delayNode=audioCtx.createDelay(1); delayNode.delayTime.value=0.12;
-  echoGain=audioCtx.createGain(); echoGain.gain.value=Number($("echo").value)/100*0.45;
-
-  source.connect(gainNode); gainNode.connect(analyser); gainNode.connect(dest);
-  gainNode.connect(delayNode); delayNode.connect(echoGain); echoGain.connect(dest);
-  drawViz();
+async function initMicStream() {
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({ audio: { channelCount: 1, sampleRate: 48000, echoCancellation: false } });
+    setupAudioNodes(stream);
+    showMsg("Microphone active.");
+  } catch (e) { showMsg("Mic error: " + e.message); }
 }
 
-async function buildPeerConnection(){
-  if(!localStream)return;
-  if(pc)try{pc.close()}catch(_){}
-  pc=new RTCPeerConnection({iceServers:[{urls:"stun:stun.l.google.com:19302"}]});
-  
-  const txTrack=(dest && dest.stream && dest.stream.getAudioTracks()[0]) || localStream.getAudioTracks()[0];
-  if(txTrack){ txTrack.enabled=micEnabled; pc.addTrack(txTrack, new MediaStream([txTrack])); }
+function setupAudioNodes(st) {
+  if (audioCtx) try { audioCtx.close(); } catch(_) {}
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === "suspended") audioCtx.resume();
 
-  pc.onconnectionstatechange=()=>{
-    const ok=pc.connectionState==="connected";
-    $("liveDot").classList.toggle("on",ok);
-    $("stateText").textContent=ok?"Live Stream Connected":"Status: "+pc.connectionState;
-  };
+  srcNode = audioCtx.createMediaStreamSource(st);
+  gainNode = audioCtx.createGain(); gainNode.gain.value = Number($("inVol").value) / 100;
+  analyser = audioCtx.createAnalyser(); analyser.fftSize = 1024;
+  mediaDest = audioCtx.createMediaStreamDestination();
+
+  delayNode = audioCtx.createDelay(1); delayNode.delayTime.value = 0.12;
+  echoGain = audioCtx.createGain(); echoGain.gain.value = Number($("echo").value) / 100 * 0.45;
+
+  srcNode.connect(gainNode); gainNode.connect(analyser); gainNode.connect(mediaDest);
+  gainNode.connect(delayNode); delayNode.connect(echoGain); echoGain.connect(mediaDest);
+  startVisualizer();
 }
 
-async function signalLoop(){
-  if(!deviceId||!deviceToken)return;
-  try{
-    const r=await api("getSignal",{role:"device",deviceId,deviceToken});
-    if(!r.success)return;
-    if(r.blocked){$("liveDot").classList.remove("on");$("stateText").textContent="Device Blocked";return;}
-    if(r.offer && r.offerAt && r.offerAt!==lastOfferAt){
-      lastOfferAt=r.offerAt;
-      await answerOffer(r.offer);
+async function handleSignaling() {
+  if (!deviceId || !deviceToken) return;
+  try {
+    const r = await callApi("getSignal", { role: "device", deviceId, deviceToken });
+    if (!r.success) return;
+    if (r.blocked) { $("liveDot").classList.remove("on"); $("stateText").textContent = "Device Blocked"; return; }
+    if (r.offer && r.offerAt && r.offer !== lastOffer) {
+      lastOffer = r.offer;
+      await processOffer(r.offer);
     }
-  }catch(_){}
+  } catch(_) {}
 }
 
-async function answerOffer(sdp){
-  if(!localStream)return;
-  try{
-    if(!pc)await buildPeerConnection();
-    const offer=JSON.parse(sdp);
-    await pc.setRemoteDescription(new RTCSessionDescription(offer));
-    const answer=await pc.createAnswer();
+async function processOffer(offerStr) {
+  if (!stream) await initMicStream();
+  try {
+    if (!pc) {
+      pc = new RTCPeerConnection({ iceServers: [{ urls: "stun:stun.l.google.com:19302" }] });
+      pc.onconnectionstatechange = () => {
+        const ok = pc.connectionState === "connected";
+        $("liveDot").classList.toggle("on", ok);
+        $("stateText").textContent = ok ? "Live Stream Connected" : "Status: " + pc.connectionState;
+      };
+    }
+
+    await pc.setRemoteDescription(new RTCSessionDescription(JSON.parse(offerStr)));
+    const audioTrack = (mediaDest && mediaDest.stream && mediaDest.stream.getAudioTracks()[0]) || stream.getAudioTracks()[0];
+    if (audioTrack) {
+      audioTrack.enabled = micActive;
+      if (pc.getSenders().length === 0) pc.addTrack(audioTrack, stream);
+    }
+
+    const answer = await pc.createAnswer();
     await pc.setLocalDescription(answer);
-    
-    await post("saveAnswer",{deviceId,deviceToken,answer:JSON.stringify(pc.localDescription)});
-    msg("Connected to Live Controller!");
-  }catch(e){msg("Signal error: "+e.message);}
+    await postApi("saveAnswer", { deviceId, deviceToken, answer: JSON.stringify(pc.localDescription) });
+    showMsg("Connected to Controller!");
+  } catch (e) { showMsg("Signal error: " + e.message); }
 }
 
-function toggleMic(){
-  micEnabled=!micEnabled;
-  if(localStream)localStream.getAudioTracks().forEach(t=>t.enabled=micEnabled);
-  $("micBtn").textContent=micEnabled?"🎙️ Mic ON":"🔇 Mic OFF";
+function toggleMic() {
+  micActive = !micActive;
+  if (stream) stream.getAudioTracks().forEach(t => t.enabled = micActive);
+  $("micBtn").textContent = micActive ? "🎙️ Mic ON" : "🔇 Mic OFF";
 }
 
-function localInputVolume(v){$("inVal").textContent=v+"%";if(gainNode)gainNode.gain.value=v/100;}
-function localEcho(v){$("echoVal").textContent=v+"%";if(echoGain)echoGain.gain.value=(v/100)*0.45;}
+function changeInputVol(v) { $("inVal").textContent = v + "%"; if (gainNode) gainNode.gain.value = v / 100; }
+function changeEcho(v) { $("echoVal").textContent = v + "%"; if (echoGain) echoGain.gain.value = (v / 100) * 0.45; }
 
-async function syncConfig(){
-  try{
-    const r=await api("getConfig",{deviceId,deviceToken});
-    if(!r.success)return;
-    if(r.status==="BLOCKED"){ $("stateText").textContent="Blocked"; return; }
-    if(!r.canUseMic){ $("stateText").textContent="Waiting for Admin Approval"; return; }
-    if(!approvedForMic){ approvedForMic=true; await requestMic(); }
-  }catch(_){}
+async function checkSync() {
+  try {
+    const r = await callApi("getConfig", { deviceId, deviceToken });
+    if (!r.success) return;
+    if (r.status === "BLOCKED") { $("stateText").textContent = "Blocked"; return; }
+    if (!r.canUseMic) { $("stateText").textContent = "Waiting for Approval"; return; }
+    if (!isApproved) { isApproved = true; await initMicStream(); }
+  } catch(_) {}
 }
 
-function startLoops(){
-  setInterval(()=>api("heartbeat",{deviceId,deviceToken,userAgent:navigator.userAgent}),10000);
-  setInterval(syncConfig,3000);
+function startLoops() {
+  setInterval(() => callApi("heartbeat", { deviceId, deviceToken, userAgent: navigator.userAgent }), 10000);
+  setInterval(checkSync, 3000);
+  setInterval(handleSignaling, 1500);
+  checkSync();
 }
-function startSignalLoop(){setInterval(signalLoop,1500);signalLoop();}
 
-function drawViz(){
-  const c=$("viz"),x=c.getContext("2d"),dpr=devicePixelRatio||1;
-  function frame(){
-    requestAnimationFrame(frame);
-    if(!analyser)return;
-    const w=c.clientWidth,h=c.clientHeight;c.width=w*dpr;c.height=h*dpr;x.setTransform(dpr,0,0,dpr,0,0);
-    const data=new Uint8Array(analyser.fftSize);analyser.getByteTimeDomainData(data);
-    x.clearRect(0,0,w,h);x.lineWidth=2;x.strokeStyle="#6366f1";x.beginPath();
-    for(let i=0;i<data.length;i++){
-      const xx=i/(data.length-1)*w, yy=h/2+(data[i]-128)*(h*0.0035);
-      if(i===0)x.moveTo(xx,yy);else x.lineTo(xx,yy);
+function startVisualizer() {
+  const canvas = $("viz"), ctx = canvas.getContext("2d"), dpr = devicePixelRatio || 1;
+  function renderFrame() {
+    requestAnimationFrame(renderFrame);
+    if (!analyser) return;
+    const w = canvas.clientWidth, h = canvas.clientHeight;
+    canvas.width = w * dpr; canvas.height = h * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const data = new Uint8Array(analyser.fftSize); analyser.getByteTimeDomainData(data);
+    ctx.clearRect(0, 0, w, h); ctx.lineWidth = 2; ctx.strokeStyle = "#6366f1"; ctx.beginPath();
+    for (let i = 0; i < data.length; i++) {
+      const x = i / (data.length - 1) * w, y = h / 2 + (data[i] - 128) * (h * 0.0035);
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
     }
-    x.stroke();
-  }frame();
+    ctx.stroke();
+  }
+  renderFrame();
 }
 
-if(deviceId&&deviceToken){
-  $("registerBox").classList.add("hidden");$("deviceBox").classList.remove("hidden");
-  syncConfig().then(()=>{startLoops();startApprovalWatch=setInterval(syncConfig,2000);startSignalLoop();});
+if (deviceId && deviceToken) {
+  $("registerBox").classList.add("hidden"); $("deviceBox").classList.remove("hidden");
+  startLoops();
 }
 </script>
 </body>
