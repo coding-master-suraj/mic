@@ -47,7 +47,7 @@ canvas{width:100%;height:100%}.controls{margin-top:16px;display:grid;gap:13px}.c
     <div class="status"><span id="liveDot" class="dot"></span><span id="deviceTitle" class="big">Device</span><br><span id="stateText">Connecting…</span></div>
     <div class="row">
       <button id="micBtn" onclick="toggleMic()">🎙️ MIC ON</button>
-      <button class="secondary" onclick="requestMic()">ALLOW MICROPHONE</button>
+      <button class="secondary" onclick="requestMic()">🎙️ ALLOW / START MICROPHONE</button>
     </div>
 
     <div class="meter"><canvas id="viz"></canvas></div>
@@ -131,8 +131,15 @@ async function requestMic(){
     return;
   }
   try{
+    if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+      throw new Error("This browser does not support microphone access.");
+    }
     localStream=await navigator.mediaDevices.getUserMedia({audio:{
-      echoCancellation:false,noiseSuppression:false,autoGainControl:false
+      channelCount:1,
+      sampleRate:48000,
+      echoCancellation:false,
+      noiseSuppression:false,
+      autoGainControl:false
     }});
     setupAudio(localStream);
     msg("Microphone permission granted.");
@@ -142,6 +149,7 @@ async function requestMic(){
 function setupAudio(stream){
   if(audioCtx){try{audioCtx.close()}catch(_){}}
   audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+  if(audioCtx.state==="suspended") audioCtx.resume().catch(()=>{});
   source=audioCtx.createMediaStreamSource(stream);
   gainNode=audioCtx.createGain();gainNode.gain.value=Number($("inVol").value)/100;
   analyser=audioCtx.createAnalyser();analyser.fftSize=1024;
@@ -168,7 +176,7 @@ async function buildPeerConnection(){
       {urls:"stun:stun1.l.google.com:19302"}
     ]
   });
-  dest.getTracks().forEach(t=>pc.addTrack(t,dest.stream));
+  dest.getTracks().forEach(t=>{t.enabled=true;pc.addTrack(t,dest.stream)});
   const offerWait=new Promise(resolve=>{
     if(pc.iceGatheringState==="complete")return resolve();
     const f=()=>{if(pc.iceGatheringState==="complete"){pc.removeEventListener("icegatheringstatechange",f);resolve()}};
@@ -207,6 +215,7 @@ async function answerOffer(sdp){
   try{
     if(audioCtx && audioCtx.state==='suspended') await audioCtx.resume().catch(()=>{});
     await pc.setRemoteDescription(JSON.parse(sdp));
+    pc.getSenders().forEach(sender=>{if(sender.track)sender.track.enabled=micEnabled;});
     const answer=await pc.createAnswer();
     await pc.setLocalDescription(answer);
     await window._waitIce;
@@ -254,7 +263,7 @@ async function syncConfig(){
 
     if(!approvedForMic){
       approvedForMic=true;
-      msg("ADMIN APPROVED — starting microphone…");
+      msg("ADMIN APPROVED — requesting microphone permission…");
       await requestMic();
     }
 
