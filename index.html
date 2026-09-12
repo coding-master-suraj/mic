@@ -170,19 +170,23 @@ function setupAudio(stream){
 async function buildPeerConnection(){
   if(!localStream)return;
   if(pc)try{pc.close()}catch(_){}
+
   pc=new RTCPeerConnection({
     iceServers:[
       {urls:"stun:stun.l.google.com:19302"},
-      {urls:"stun:stun1.l.google.com:19302"}
+      {urls:"stun:stun1.l.google.com:19302"},
+      {urls:"stun:stun2.l.google.com:19302"}
     ]
   });
-  dest.getTracks().forEach(t=>{t.enabled=true;pc.addTrack(t,dest.stream)});
-  const offerWait=new Promise(resolve=>{
-    if(pc.iceGatheringState==="complete")return resolve();
-    const f=()=>{if(pc.iceGatheringState==="complete"){pc.removeEventListener("icegatheringstatechange",f);resolve()}};
-    pc.addEventListener("icegatheringstatechange",f);setTimeout(resolve,7000);
-  });
-  // The mic device is the answerer. It waits for controller offer.
+
+  // IMPORTANT: keep the real microphone track as the WebRTC sender.
+  // Web Audio is used only for volume/echo processing when available.
+  const txTrack=(dest && dest.stream && dest.stream.getAudioTracks()[0]) || localStream.getAudioTracks()[0];
+  if(txTrack){
+    txTrack.enabled=micEnabled;
+    pc.addTrack(txTrack, new MediaStream([txTrack]));
+  }
+
   pc.onconnectionstatechange=()=>{
     const state=pc.connectionState;
     const ok=state==="connected";
@@ -191,11 +195,13 @@ async function buildPeerConnection(){
     if(["failed","closed"].includes(state)){
       try{pc.close()}catch(_){}
       pc=null;
-      lastOfferAt="";
     }
   };
-  pc.oniceconnectionstatechange=()=>{$("stateText").textContent="WebRTC: "+pc.iceConnectionState};
-  window._waitIce=offerWait;
+
+  pc.oniceconnectionstatechange=()=>{
+    const s=pc.iceConnectionState;
+    if(s!=="connected" && s!=="completed") $("stateText").textContent="WebRTC: "+s;
+  };
 }
 async function signalLoop(){
   if(!deviceId||!deviceToken)return;
@@ -211,18 +217,43 @@ async function signalLoop(){
 }
 async function answerOffer(sdp){
   if(!localStream)return;
-  if(!pc)await buildPeerConnection();
   try{
+    if(!pc)await buildPeerConnection();
+    if(!pc)throw new Error("WebRTC connection could not be created");
     if(audioCtx && audioCtx.state==='suspended') await audioCtx.resume().catch(()=>{});
-    await pc.setRemoteDescription(JSON.parse(sdp));
-    pc.getSenders().forEach(sender=>{if(sender.track)sender.track.enabled=micEnabled;});
+
+    const offer=JSON.parse(sdp);
+    await pc.setRemoteDescription(new RTCSessionDescription(offer));
+
+    // The controller offers AUDIO recvonly. The mic must answer AUDIO sendonly.
+    const transceivers=pc.getTransceivers();
+    const audioTransceiver=transceivers.find(t=>t.receiver && t.receiver.track && t.receiver.track.kind==="audio") || transceivers.find(t=>t.sender && t.sender.track && t.sender.track.kind==="audio");
+    if(audioTransceiver){
+      audioTransceiver.direction="sendonly";
+      const sender=audioTransceiver.sender;
+      const txTrack=(dest && dest.stream && dest.stream.getAudioTracks()[0]) || localStream.getAudioTracks()[0];
+      if(sender && txTrack) await sender.replaceTrack(txTrack);
+    }else{
+      const txTrack=(dest && dest.stream && dest.stream.getAudioTracks()[0]) || localStream.getAudioTracks()[0];
+      if(txTrack)pc.addTrack(txTrack,new MediaStream([txTrack]));
+    }
+
+    pc.getSenders().forEach(sender=>{
+      if(sender.track && sender.track.kind==="audio") sender.track.enabled=micEnabled;
+    });
+
     const answer=await pc.createAnswer();
     await pc.setLocalDescription(answer);
-    await window._waitIce;
+    await waitIce(pc);
+
     const full=JSON.stringify(pc.localDescription);
     const r=await post("saveAnswer",{deviceId,deviceToken,answer:full});
-    msg(r.success?"Answer sent — waiting for controller audio…":r.error);
-  }catch(e){msg("WebRTC error: "+e.message)}
+    if(!r.success)throw new Error(r.error||"Answer rejected");
+    msg("WebRTC answer sent — LIVE VOICE connection starting…");
+  }catch(e){
+    console.error(e);
+    msg("WebRTC error: "+e.message);
+  }
 }
 function toggleMic(){
   micEnabled=!micEnabled;
